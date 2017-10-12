@@ -19,9 +19,9 @@ import com.example.milosevi.rxjavatest.model.Genres;
 import com.example.milosevi.rxjavatest.model.Movie;
 import com.example.milosevi.rxjavatest.model.Movies;
 import com.example.milosevi.rxjavatest.ui.adapters.MovieGridAdapter;
-import com.example.milosevi.rxjavatest.ui.adapters.mvp.GridContract;
-import com.example.milosevi.rxjavatest.ui.adapters.mvp.GridPresenter;
-import com.example.milosevi.rxjavatest.ui.adapters.mvp.GridRepository;
+import com.example.milosevi.rxjavatest.ui.mvp.GridContract;
+import com.example.milosevi.rxjavatest.ui.mvp.GridPresenter;
+import com.example.milosevi.rxjavatest.ui.mvp.GridRepository;
 import com.example.milosevi.rxjavatest.webapi.WebApiFetcher;
 
 import java.util.ArrayList;

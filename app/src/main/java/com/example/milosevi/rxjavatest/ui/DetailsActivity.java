@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,7 +17,10 @@ import com.example.milosevi.rxjavatest.ImageLoader;
 import com.example.milosevi.rxjavatest.R;
 import com.example.milosevi.rxjavatest.model.Movie;
 import com.example.milosevi.rxjavatest.model.Reviews;
+import com.example.milosevi.rxjavatest.model.Trailer;
 import com.example.milosevi.rxjavatest.model.Trailers;
+import com.example.milosevi.rxjavatest.ui.adapters.ReviewsAdapter;
+import com.example.milosevi.rxjavatest.ui.adapters.TrailerAdapter;
 import com.example.milosevi.rxjavatest.webapi.WebApiFetcher;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -38,6 +43,10 @@ public class DetailsActivity extends AppCompatActivity {
     private Button mAddTofavoritesBtn;
     public static final String EXTRA_MOVIE = "om.example.milosevi.rxjavatest.EXTRA_MOVIE";
     private CompositeDisposable disposableList = new CompositeDisposable();
+    private RecyclerView mTrailersRecyclerView;
+    private RecyclerView mReviewsRecyclerView;
+    private TrailerAdapter trailerAdapter;
+    private ReviewsAdapter mReviewsAdapter;
 
 
     @Override
@@ -56,8 +65,38 @@ public class DetailsActivity extends AppCompatActivity {
         mDescTextView = findViewById(R.id.details_description);
         mDescTextView.setText(mDetailMovie.getDescription());
         ImageLoader.loadImageintoView(this,mDetailMovie.getImageUrl(),mImageView);
+        initTrailerRecyclerView();
+        initReviewsRecyclerView();
         fetchTrailers();
         fetchReviews();
+    }
+
+    private void initReviewsRecyclerView() {
+        LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+        mReviewsAdapter = new ReviewsAdapter();
+        mReviewsRecyclerView =  findViewById(R.id.recycler_reviews);
+        mReviewsRecyclerView.setLayoutManager(layoutManager);
+//        trailerAdapter.setOnItemClickListener(new TrailerAdapter.OnRecyclerItemClickListener() {
+//            @Override
+//            public void onItemClick(Trailer t) {
+//                watchYoutubeVideo(getApplicationContext(),t.getKey());
+//            }
+//        });
+        mReviewsRecyclerView.setAdapter(mReviewsAdapter);
+    }
+
+    private void initTrailerRecyclerView() {
+        LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
+        trailerAdapter = new TrailerAdapter();
+        mTrailersRecyclerView = (RecyclerView) findViewById(R.id.recycler_trailers);
+        mTrailersRecyclerView.setLayoutManager(layoutManager);
+        trailerAdapter.setOnItemClickListener(new TrailerAdapter.OnRecyclerItemClickListener() {
+            @Override
+            public void onItemClick(Trailer t) {
+                watchYoutubeVideo(getApplicationContext(),t.getKey());
+            }
+        });
+        mTrailersRecyclerView.setAdapter(trailerAdapter);
     }
 
     @Override
@@ -77,7 +116,7 @@ public class DetailsActivity extends AppCompatActivity {
                     public void onNext(Trailers trailers) {
                         Log.i(TAG, "onNext: " + trailers);
 //                        watchYoutubeVideo(getApplicationContext(),trailers.getTrailers().get(0).getKey());
-//                        adapter.setData(trailers.getTrailers());
+                        trailerAdapter.setTrailers(trailers.getTrailers());
                     }
 
                     @Override
@@ -100,7 +139,7 @@ public class DetailsActivity extends AppCompatActivity {
                     @Override
                     public void onNext(Reviews reviews) {
                         Log.i(TAG, "onNext: " + reviews);
-//                        adapter.setData(trailers.getTrailers());
+                        mReviewsAdapter.setReviews(reviews.getReviewList());
                     }
 
                     @Override

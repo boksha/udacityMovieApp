@@ -20,7 +20,7 @@ public class Reviews {
     @SerializedName("results")
     List<Review> mReviews;
 
-    public List<Review> getReview() {
+    public List<Review> getReviewList() {
         return mReviews;
     }
 

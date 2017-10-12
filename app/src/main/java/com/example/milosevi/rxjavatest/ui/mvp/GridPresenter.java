@@ -1,4 +1,4 @@
-package com.example.milosevi.rxjavatest.ui.adapters.mvp;
+package com.example.milosevi.rxjavatest.ui.mvp;
 
 /**
  * Created by milosevi on 10/10/17.
