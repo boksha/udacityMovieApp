@@ -33,7 +33,6 @@ public class MovieGridAdapter extends BaseAdapter {
     // 1
     public MovieGridAdapter(Context context) {
         this.mContext = context.getApplicationContext();
-//        this.movies = movies;
     }
 
     // 2
@@ -76,8 +75,5 @@ public class MovieGridAdapter extends BaseAdapter {
     public Movie getItem(int position) {
         return mMovies.get(position);
     }
-
-
-
 
 }

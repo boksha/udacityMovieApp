@@ -1,4 +1,4 @@
-package com.example.milosevi.rxjavatest.ui.adapters;
+package com.example.milosevi.rxjavatest.details.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.milosevi.rxjavatest.R;
-import com.example.milosevi.rxjavatest.model.Review;
+import com.example.milosevi.rxjavatest.details.model.Review;
 
 import java.util.ArrayList;
 import java.util.List;

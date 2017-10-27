@@ -1,4 +1,4 @@
-package com.example.milosevi.rxjavatest.model;
+package com.example.milosevi.rxjavatest.details.model;
 
 import com.google.gson.annotations.SerializedName;
 

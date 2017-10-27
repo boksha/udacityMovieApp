@@ -1,12 +1,9 @@
 package com.example.milosevi.rxjavatest.ui.mvp;
 
-import android.util.Log;
-
-import com.example.milosevi.rxjavatest.webapi.GitHubFetcher;
+import com.example.milosevi.rxjavatest.model.Movies;
+import com.example.milosevi.rxjavatest.webapi.WebApiFetcher;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by milosevi on 10/10/17.
@@ -15,42 +12,25 @@ import io.reactivex.schedulers.Schedulers;
 public class GridRepository implements GridContract.Repository {
 
     private static final String TAG = "GridRepository";
+    private WebApiFetcher mWebApiSource;
 
-    public GridRepository(){
-
+    public GridRepository() {
+        mWebApiSource = WebApiFetcher.getInstance();
     }
 
-    public void getStarredRepos(String username) {
-       /* disposable = */
+    @Override
+    public Observable<Movies> getMostPopular() {
+        return mWebApiSource.getPopularMovies();
+    }
 
-        GitHubFetcher.getInstance().getStarredRepos(username).subscribeOn(Schedulers.io())
-                .filter(result->result !=null)
-                .flatMap((gitHubRepos) -> Observable.fromIterable(gitHubRepos))
-                .take(2)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe( (gitHubRepos) -> {
-//                    Observable.fromIterable(gitHubRepos)
-//                            .subscribe(gitHub ->    Log.i(TAG, "onNext: " + gitHub +"\n"));
-                    Log.i(TAG, "onNext: " + gitHubRepos);
-//                        adapter.setGitHubRepos(gitHubRepos);
-                }, (e)-> {
-//                    e.printStackTrace();
-                    Log.e(TAG, "onError: " ,e);}, ()-> {Log.i(TAG, "onComplete: "  );});
+    @Override
+    public Observable<Movies> getTopRated() {
+        return mWebApiSource.getTopRatedMovies();
 
     }
 
     @Override
-    public void getMostPopular() {
-
-    }
-
-    @Override
-    public void getTopRated() {
-
-    }
-
-    @Override
-    public void getMoviesWithWord(String search) {
-
+    public Observable<Movies> getMoviesWithWord(String search) {
+        return mWebApiSource.findMoviesWithWord(search);
     }
 }

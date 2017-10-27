@@ -1,7 +1,6 @@
-package com.example.milosevi.rxjavatest.ui;
+package com.example.milosevi.rxjavatest.details;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,24 +14,22 @@ import android.widget.TextView;
 
 import com.example.milosevi.rxjavatest.ImageLoader;
 import com.example.milosevi.rxjavatest.R;
+import com.example.milosevi.rxjavatest.details.adapters.ReviewsAdapter;
+import com.example.milosevi.rxjavatest.details.adapters.TrailerAdapter;
+import com.example.milosevi.rxjavatest.details.model.Review;
+import com.example.milosevi.rxjavatest.details.model.Trailer;
+import com.example.milosevi.rxjavatest.details.mvp.DetailsContract;
+import com.example.milosevi.rxjavatest.details.mvp.DetailsPresenter;
+import com.example.milosevi.rxjavatest.details.mvp.DetailsRepository;
 import com.example.milosevi.rxjavatest.model.Movie;
-import com.example.milosevi.rxjavatest.model.Reviews;
-import com.example.milosevi.rxjavatest.model.Trailer;
-import com.example.milosevi.rxjavatest.model.Trailers;
-import com.example.milosevi.rxjavatest.ui.adapters.ReviewsAdapter;
-import com.example.milosevi.rxjavatest.ui.adapters.TrailerAdapter;
-import com.example.milosevi.rxjavatest.webapi.WebApiFetcher;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
+import java.util.List;
 
 /**
  * Created by milosevi on 10/10/17.
  */
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements DetailsContract.View{
     private static final String TAG = "Miki";
     private Movie mDetailMovie;
     private TextView mtitleTextView;
@@ -42,9 +39,11 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView mRatingsTextView;
     private Button mAddTofavoritesBtn;
     public static final String EXTRA_MOVIE = "om.example.milosevi.rxjavatest.EXTRA_MOVIE";
-    private CompositeDisposable disposableList = new CompositeDisposable();
+//    private CompositeDisposable disposableList = new CompositeDisposable();
     private RecyclerView mTrailersRecyclerView;
     private RecyclerView mReviewsRecyclerView;
+    private DetailsContract.Presenter mPresenter;
+
     private TrailerAdapter trailerAdapter;
     private ReviewsAdapter mReviewsAdapter;
 
@@ -54,6 +53,7 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         mDetailMovie = getIntent().getParcelableExtra(EXTRA_MOVIE);
+        mPresenter = new DetailsPresenter(new DetailsRepository());
         Log.i(TAG, "onCreate: " + mDetailMovie);
         mtitleTextView = findViewById(R.id.details_title);
         mReleaseDateTextView = findViewById(R.id.details_date);
@@ -67,8 +67,22 @@ public class DetailsActivity extends AppCompatActivity {
         ImageLoader.loadImageintoView(this,mDetailMovie.getImageUrl(),mImageView);
         initTrailerRecyclerView();
         initReviewsRecyclerView();
-        fetchTrailers();
-        fetchReviews();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.onViewAttached(this);
+        mPresenter.onLoadTrailerList(mDetailMovie.getId());
+        mPresenter.onLoadReviewList(mDetailMovie.getId());
+    }
+
+
+    @Override
+    protected void onPause() {
+        mPresenter.onViewDetached(this);
+        super.onPause();
     }
 
     private void initReviewsRecyclerView() {
@@ -76,12 +90,6 @@ public class DetailsActivity extends AppCompatActivity {
         mReviewsAdapter = new ReviewsAdapter();
         mReviewsRecyclerView =  findViewById(R.id.recycler_reviews);
         mReviewsRecyclerView.setLayoutManager(layoutManager);
-//        trailerAdapter.setOnItemClickListener(new TrailerAdapter.OnRecyclerItemClickListener() {
-//            @Override
-//            public void onItemClick(Trailer t) {
-//                watchYoutubeVideo(getApplicationContext(),t.getKey());
-//            }
-//        });
         mReviewsRecyclerView.setAdapter(mReviewsAdapter);
     }
 
@@ -93,7 +101,7 @@ public class DetailsActivity extends AppCompatActivity {
         trailerAdapter.setOnItemClickListener(new TrailerAdapter.OnRecyclerItemClickListener() {
             @Override
             public void onItemClick(Trailer t) {
-                watchYoutubeVideo(getApplicationContext(),t.getKey());
+                mPresenter.onTrailerSelected(t.getKey());
             }
         });
         mTrailersRecyclerView.setAdapter(trailerAdapter);
@@ -101,61 +109,11 @@ public class DetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (disposableList != null) {
-            Log.i(TAG, "onDestroy: dispose");
-            disposableList.clear();
-        }
+        mPresenter.onActivityDestroyed();
         super.onDestroy();
     }
 
-    private void fetchTrailers() {
-        disposableList.add(WebApiFetcher.getInstance().getTrailers(mDetailMovie.getId()).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<Trailers>() {
-
-                    @Override
-                    public void onNext(Trailers trailers) {
-                        Log.i(TAG, "onNext: " + trailers);
-//                        watchYoutubeVideo(getApplicationContext(),trailers.getTrailers().get(0).getKey());
-                        trailerAdapter.setTrailers(trailers.getTrailers());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
-                    }
-                }));
-
-    }
-
-    private void fetchReviews() {
-        disposableList.add(WebApiFetcher.getInstance().getReviews(mDetailMovie.getId()).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<Reviews>() {
-
-                    @Override
-                    public void onNext(Reviews reviews) {
-                        Log.i(TAG, "onNext: " + reviews);
-                        mReviewsAdapter.setReviews(reviews.getReviewList());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
-                    }
-                }));
-
-    }
-
-    public void watchYoutubeVideo(Context context, String key){
+    public void watchYoutubeVideo( String key){
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://www.youtube.com/watch?v=" + key));
@@ -164,5 +122,22 @@ public class DetailsActivity extends AppCompatActivity {
         } catch (ActivityNotFoundException ex) {
             startActivity(webIntent);
         }
+    }
+
+    @Override
+    public void showTrailerList(List<Trailer> trailers) {
+        trailerAdapter.setTrailers(trailers);
+
+    }
+
+    @Override
+    public void showReviewList(List<Review> reviews) {
+        mReviewsAdapter.setReviews(reviews);
+
+    }
+
+    @Override
+    public void navigateToTrailer(String key) {
+        watchYoutubeVideo(key);
     }
 }

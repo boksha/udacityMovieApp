@@ -2,8 +2,8 @@ package com.example.milosevi.rxjavatest.webapi;
 
 import com.example.milosevi.rxjavatest.model.Genres;
 import com.example.milosevi.rxjavatest.model.Movies;
-import com.example.milosevi.rxjavatest.model.Reviews;
-import com.example.milosevi.rxjavatest.model.Trailers;
+import com.example.milosevi.rxjavatest.details.model.Reviews;
+import com.example.milosevi.rxjavatest.details.model.Trailers;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
