@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -65,6 +66,15 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         mDescTextView = findViewById(R.id.details_description);
         mDescTextView.setText(mDetailMovie.getDescription());
         ImageLoader.loadImageintoView(this,mDetailMovie.getImageUrl(),mImageView);
+        mAddTofavoritesBtn = findViewById(R.id.button_add_to_favorites);
+        mAddTofavoritesBtn.setOnClickListener(view -> {
+            if (mAddTofavoritesBtn.getText().equals("UNMARK")) {
+                //add this info in mdetailMovie; you should restore this from DB if exist!!!
+                mPresenter.onMovieMarked(mDetailMovie, false);
+            } else {
+                mPresenter.onMovieMarked(mDetailMovie, true);
+            }
+            });
         initTrailerRecyclerView();
         initReviewsRecyclerView();
 
@@ -76,6 +86,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         mPresenter.onViewAttached(this);
         mPresenter.onLoadTrailerList(mDetailMovie.getId());
         mPresenter.onLoadReviewList(mDetailMovie.getId());
+        mPresenter.onLoadMovie(mDetailMovie.getId());
     }
 
 
@@ -139,5 +150,15 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     @Override
     public void navigateToTrailer(String key) {
         watchYoutubeVideo(key);
+    }
+
+    @Override
+    public void updateMarkButton(boolean marked) {
+        if (marked) {
+            mAddTofavoritesBtn.setText("UNMARK");
+        }
+        else {
+            mAddTofavoritesBtn.setText("MARK");
+        }
     }
 }

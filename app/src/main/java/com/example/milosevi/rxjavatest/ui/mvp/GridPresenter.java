@@ -5,6 +5,8 @@ import android.util.Log;
 import com.example.milosevi.rxjavatest.model.Movie;
 import com.example.milosevi.rxjavatest.model.Movies;
 
+import java.util.List;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
@@ -44,6 +46,8 @@ public class GridPresenter implements GridContract.Presenter {
             getMostPopularMovies();
         } else if (menuMode == MENU_ITEM_TOP_RATED) {
             getTopRated();
+        } else if (menuMode == MENU_ITEM_FAVOURITES){
+            getFavourites();
         }
     }
 
@@ -75,6 +79,27 @@ public class GridPresenter implements GridContract.Presenter {
                     public void onNext(Movies movies) {
                         Log.i(TAG, "onNext: " + movies);
                         mView.showMovieList(movies.getMovies());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError: " + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG, "onComplete: ");
+                    }
+                }));
+    }
+    private void getFavourites() {
+        disposableList.add(mRepository.getFavourites().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
+
+                    @Override
+                    public void onNext(List<Movie> movies) {
+                        Log.i(TAG, "onNext: " + movies);
+                        mView.showMovieList(movies);
                     }
 
                     @Override

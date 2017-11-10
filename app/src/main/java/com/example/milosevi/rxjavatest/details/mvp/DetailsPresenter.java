@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.milosevi.rxjavatest.details.model.Reviews;
 import com.example.milosevi.rxjavatest.details.model.Trailers;
+import com.example.milosevi.rxjavatest.model.Movie;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -32,6 +33,23 @@ public class DetailsPresenter implements DetailsContract.Presenter {
     @Override
     public void onLoadReviewList(Integer id) {
         fetchReviews(id);
+    }
+
+    @Override
+    public void onLoadMovie(Integer id) {
+        mView.updateMarkButton(mRepository.isMovieMarked(id));
+    }
+
+    @Override
+    public void onMovieMarked(Movie movie, boolean mark) {
+        movie.setMarked(!movie.isMarked());
+        if (mark) {
+            mRepository.markMovie(movie);
+        } else {
+            mRepository.unmarkMovie(movie);
+        }
+        mView.updateMarkButton(mark);
+        Log.i(TAG, "onMovieMarked: ");
     }
 
     @Override

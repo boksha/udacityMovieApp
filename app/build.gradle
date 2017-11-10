@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'realm-android'
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.example.milosevi.rxjavatest"
         minSdkVersion 15
@@ -40,7 +40,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:recyclerview-v7:26.1.0'
-
+    compile 'com.facebook.stetho:stetho:1.5.0'
+    compile 'com.uphyca:stetho_realm:2.1.0'
+    annotationProcessor 'dk.ilios:realmfieldnameshelper:1.1.1'
 //    compile 'com.trello.rxlifecycle2:rxlifecycle:2.2.0'
 //
 //// If you want to bind to Android-specific lifecycles

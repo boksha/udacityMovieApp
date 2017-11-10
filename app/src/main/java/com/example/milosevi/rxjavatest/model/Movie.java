@@ -5,11 +5,16 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by milosevi on 9/29/17.
  */
 
-public class Movie implements Parcelable {
+public class Movie  extends RealmObject implements Parcelable {
+
+    @PrimaryKey
     @SerializedName("id")
     private Integer id;//id
     @SerializedName("title")
@@ -22,6 +27,43 @@ public class Movie implements Parcelable {
     private String mUserRating ;//vote_average in the api)
     @SerializedName("release_date")
     private String mReleaseDate;//release_date
+
+    public Movie(){};
+
+    public boolean isMarked() {
+        return mIsMarked;
+    }
+
+    public void setMarked(boolean marked) {
+        mIsMarked = marked;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setTitle(String mTitle) {
+        this.mTitle = mTitle;
+    }
+
+    public void setImageUrl(String mImageUrl) {
+        this.mImageUrl = mImageUrl;
+    }
+
+    public void setDescription(String mDescription) {
+        this.mDescription = mDescription;
+    }
+
+    public void setUserRating(String mUserRating) {
+        this.mUserRating = mUserRating;
+    }
+
+    public void setReleaseDate(String mReleaseDate) {
+        this.mReleaseDate = mReleaseDate;
+    }
+
+    //realm param TODO create separate objects
+    private boolean mIsMarked;
 
     public Integer getId() {
         return id;
@@ -56,6 +98,26 @@ public class Movie implements Parcelable {
         this.mDescription = mDescription;
         this.mUserRating = mUserRating;
         this.mReleaseDate = mReleaseDate;
+    }
+
+    public Movie(Integer id, String mTitle, String mImageUrl, String mDescription, String mUserRating, String mReleaseDate, boolean isMarked) {
+        this.id = id;
+        this.mTitle = mTitle;
+        this.mImageUrl = mImageUrl;
+        this.mDescription = mDescription;
+        this.mUserRating = mUserRating;
+        this.mReleaseDate = mReleaseDate;
+        this.mIsMarked = isMarked;
+    }
+
+    public Movie(Movie m) {
+        this.id = m.id;
+        this.mTitle = m.mTitle;
+        this.mImageUrl = m.mImageUrl;
+        this.mDescription = m.mDescription;
+        this.mUserRating = m.mUserRating;
+        this.mReleaseDate = m.mReleaseDate;
+        this.mIsMarked = m.mIsMarked;
     }
 
     @Override
