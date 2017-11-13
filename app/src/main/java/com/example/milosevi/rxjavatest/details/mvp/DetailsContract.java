@@ -39,7 +39,7 @@ public class DetailsContract {
         void onLoadTrailerList(Integer id);
         void onLoadReviewList(Integer id);
         void onLoadMovie(Integer id);
-        void onMovieMarked(Movie movie, boolean mark);
+        void onMovieMarked(Movie movie);
         void onViewAttached(DetailsContract.View view);
         void onViewDetached(DetailsContract.View view);
         void onActivityDestroyed();

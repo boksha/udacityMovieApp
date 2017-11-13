@@ -30,7 +30,7 @@ import java.util.List;
  * Created by milosevi on 10/10/17.
  */
 
-public class DetailsActivity extends AppCompatActivity implements DetailsContract.View{
+public class DetailsActivity extends AppCompatActivity implements DetailsContract.View {
     private static final String TAG = "Miki";
     private Movie mDetailMovie;
     private TextView mtitleTextView;
@@ -40,7 +40,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     private TextView mRatingsTextView;
     private Button mAddTofavoritesBtn;
     public static final String EXTRA_MOVIE = "om.example.milosevi.rxjavatest.EXTRA_MOVIE";
-//    private CompositeDisposable disposableList = new CompositeDisposable();
+    //    private CompositeDisposable disposableList = new CompositeDisposable();
     private RecyclerView mTrailersRecyclerView;
     private RecyclerView mReviewsRecyclerView;
     private DetailsContract.Presenter mPresenter;
@@ -65,16 +65,11 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         mtitleTextView.setText(mDetailMovie.getTitle());
         mDescTextView = findViewById(R.id.details_description);
         mDescTextView.setText(mDetailMovie.getDescription());
-        ImageLoader.loadImageintoView(this,mDetailMovie.getImageUrl(),mImageView);
+        ImageLoader.loadImageintoView(this, mDetailMovie.getImageUrl(), mImageView);
         mAddTofavoritesBtn = findViewById(R.id.button_add_to_favorites);
         mAddTofavoritesBtn.setOnClickListener(view -> {
-            if (mAddTofavoritesBtn.getText().equals("UNMARK")) {
-                //add this info in mdetailMovie; you should restore this from DB if exist!!!
-                mPresenter.onMovieMarked(mDetailMovie, false);
-            } else {
-                mPresenter.onMovieMarked(mDetailMovie, true);
-            }
-            });
+            mPresenter.onMovieMarked(mDetailMovie);
+        });
         initTrailerRecyclerView();
         initReviewsRecyclerView();
 
@@ -97,15 +92,15 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     }
 
     private void initReviewsRecyclerView() {
-        LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mReviewsAdapter = new ReviewsAdapter();
-        mReviewsRecyclerView =  findViewById(R.id.recycler_reviews);
+        mReviewsRecyclerView = findViewById(R.id.recycler_reviews);
         mReviewsRecyclerView.setLayoutManager(layoutManager);
         mReviewsRecyclerView.setAdapter(mReviewsAdapter);
     }
 
     private void initTrailerRecyclerView() {
-        LinearLayoutManager layoutManager= new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         trailerAdapter = new TrailerAdapter();
         mTrailersRecyclerView = (RecyclerView) findViewById(R.id.recycler_trailers);
         mTrailersRecyclerView.setLayoutManager(layoutManager);
@@ -124,7 +119,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         super.onDestroy();
     }
 
-    public void watchYoutubeVideo( String key){
+    public void watchYoutubeVideo(String key) {
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://www.youtube.com/watch?v=" + key));
@@ -156,8 +151,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     public void updateMarkButton(boolean marked) {
         if (marked) {
             mAddTofavoritesBtn.setText("UNMARK");
-        }
-        else {
+        } else {
             mAddTofavoritesBtn.setText("MARK");
         }
     }

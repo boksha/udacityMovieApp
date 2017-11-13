@@ -158,31 +158,4 @@ public class GridPresenter implements GridContract.Presenter {
                 }));
 
     }
-
-
-//    private void getGenreList() {
-//        disposableList.add(WebApiFetcher.getInstance().getGenres().subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<Genres>() {
-//
-//
-//                    @Override
-//                    public void onNext(Genres gitHubRepos) {
-//                        Log.i(TAG, "onNext: " + gitHubRepos);
-////                movieGridAdapter.setGitHubRepos(gitHubRepos);
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        Log.i(TAG, "onError: " + e.getMessage());
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//                        Log.i(TAG, "onComplete: ");
-//                    }
-//                }));
-//
-//    }
-
-
 }

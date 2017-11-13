@@ -3,18 +3,17 @@ package com.example.milosevi.rxjavatest.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.milosevi.rxjavatest.database.model.FavouriteMovieRealm;
+import com.example.milosevi.rxjavatest.database.model.MostPopularMovieRealm;
+import com.example.milosevi.rxjavatest.database.model.TopRatedMovieRealm;
 import com.google.gson.annotations.SerializedName;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by milosevi on 9/29/17.
  */
 
-public class Movie  extends RealmObject implements Parcelable {
+public class Movie implements Parcelable {
 
-    @PrimaryKey
     @SerializedName("id")
     private Integer id;//id
     @SerializedName("title")
@@ -118,6 +117,33 @@ public class Movie  extends RealmObject implements Parcelable {
         this.mUserRating = m.mUserRating;
         this.mReleaseDate = m.mReleaseDate;
         this.mIsMarked = m.mIsMarked;
+    }
+
+    public Movie(FavouriteMovieRealm m) {
+        this.id = m.getId();
+        this.mTitle = m.getTitle();
+        this.mImageUrl = m.getImageUrl();
+        this.mDescription = m.getDescription();
+        this.mUserRating = m.getUserRating();
+        this.mReleaseDate = m.getReleaseDate();
+    }
+
+    public Movie(TopRatedMovieRealm m) {
+        this.id = m.getId();
+        this.mTitle = m.getTitle();
+        this.mImageUrl = m.getImageUrl();
+        this.mDescription = m.getDescription();
+        this.mUserRating = m.getUserRating();
+        this.mReleaseDate = m.getReleaseDate();
+    }
+
+    public Movie(MostPopularMovieRealm m) {
+        this.id = m.getId();
+        this.mTitle = m.getTitle();
+        this.mImageUrl = m.getImageUrl();
+        this.mDescription = m.getDescription();
+        this.mUserRating = m.getUserRating();
+        this.mReleaseDate = m.getReleaseDate();
     }
 
     @Override

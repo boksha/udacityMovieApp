@@ -6,6 +6,7 @@ import com.facebook.stetho.Stetho;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by miodrag.milosevic on 11/3/2017.
@@ -17,9 +18,11 @@ public class MovieApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
-//        RealmConfiguration config = new RealmConfiguration.Builder(context)
-//                .deleteRealmIfMigrationNeeded()
-//                .build()
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded() // todo remove for production
+                .build();
+        Realm.setDefaultConfiguration(config);
+
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))

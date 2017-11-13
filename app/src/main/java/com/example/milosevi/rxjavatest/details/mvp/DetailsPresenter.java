@@ -41,15 +41,16 @@ public class DetailsPresenter implements DetailsContract.Presenter {
     }
 
     @Override
-    public void onMovieMarked(Movie movie, boolean mark) {
-        movie.setMarked(!movie.isMarked());
+    public void onMovieMarked(Movie movie) {
+        boolean mark = ! mRepository.isMovieMarked(movie.getId());
+//        movie.setMarked(!movie.isMarked());
         if (mark) {
             mRepository.markMovie(movie);
         } else {
             mRepository.unmarkMovie(movie);
         }
         mView.updateMarkButton(mark);
-        Log.i(TAG, "onMovieMarked: ");
+        Log.i(TAG, "onMovieMarked: " + mark);
     }
 
     @Override

@@ -2,21 +2,18 @@ package com.example.milosevi.rxjavatest.database;
 
 import android.util.Log;
 
+import com.example.milosevi.rxjavatest.database.model.FavouriteMovieRealm;
+import com.example.milosevi.rxjavatest.database.model.FavouriteMovieRealmFields;
+import com.example.milosevi.rxjavatest.database.model.MostPopularMovieRealm;
+import com.example.milosevi.rxjavatest.database.model.TopRatedMovieRealm;
 import com.example.milosevi.rxjavatest.model.Movie;
-import com.example.milosevi.rxjavatest.model.MovieFields;
-import com.example.milosevi.rxjavatest.webapi.MovieService;
-import com.example.milosevi.rxjavatest.webapi.WebApiFetcher;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -40,52 +37,84 @@ public class DataBaseManager {
 
     public void addToFavourites(Movie movie) {
         try (Realm realmInstance = Realm.getDefaultInstance()) {
-            Log.i(TAG, "addToFavourites: " + movie.isMarked());
-            realmInstance.executeTransaction((realm) -> realm.insertOrUpdate(movie));
+            Log.i(TAG, "addToFavourites: " + movie);
+            realmInstance.executeTransaction((realm) -> {
+                FavouriteMovieRealm result = new FavouriteMovieRealm(movie);
+                    realm.insertOrUpdate(result);
+            });
         }
     }
 
     public void removeFromFavourites(Movie movie) {
         try (Realm realmInstance = Realm.getDefaultInstance()) {
-            Log.i(TAG, "removeFromFavourites: " + movie.isMarked());
+            Log.i(TAG, "removeFromFavourites: " + movie);
             realmInstance.executeTransaction((realm) -> {
-                RealmResults<Movie> result = realm.where(Movie.class).equalTo(MovieFields.ID, movie.getId()).findAll();
-                result.deleteAllFromRealm();
+                FavouriteMovieRealm result = realm.where(FavouriteMovieRealm.class)
+                        .equalTo(FavouriteMovieRealmFields.ID, movie.getId())
+                        .findFirst();
+                result.deleteFromRealm();
             });
         }
     }
 
     public boolean isMovieInFavouritesById(int id) {
-        final Movie resultRealm;
+        final FavouriteMovieRealm resultRealm;
         try (Realm realmInstance = Realm.getDefaultInstance()) {
-            resultRealm = realmInstance.where(Movie.class).equalTo(MovieFields.ID, id).findFirst();
+            resultRealm = realmInstance.where(FavouriteMovieRealm.class)
+                    .equalTo(FavouriteMovieRealmFields.ID, id)
+              .findFirst();
             Log.i(TAG, "isMovieInFavouritesById: " + resultRealm);
         }
         return resultRealm != null;
     }
 
-    public Movie getMovieFromFavouritesById(int id) {
-        final Movie resultRealm;
+    public FavouriteMovieRealm getMovieFromFavouritesById(int id) {
+        final FavouriteMovieRealm resultRealm;
         try (Realm realmInstance = Realm.getDefaultInstance()) {
-            resultRealm = realmInstance.where(Movie.class).equalTo(MovieFields.ID, id).findFirst();
+            resultRealm = realmInstance.where(FavouriteMovieRealm.class).equalTo(FavouriteMovieRealmFields.ID, id)
+                  .findFirst();
             Log.i(TAG, "getMovieFromFavouritesById: " + resultRealm);
         }
-        return resultRealm ;
+        return resultRealm;
     }
 
     public Observable<List<Movie>> getFavouriteMovies() {
         try (Realm realmInstance = Realm.getDefaultInstance()) {
             Log.i(TAG, "getFavouriteMovies: ");
-
-// Query in the background
-            RealmResults<Movie> realmResults = realmInstance.where(Movie.class)
+            RealmResults<FavouriteMovieRealm> realmResults = realmInstance.where(FavouriteMovieRealm.class)
                     .findAllAsync();
-
-// Use ChangeListeners to be notified about updates
             final List<Movie> movies = new ArrayList<>();
-//TODO dont use it like this, you are losing realm zero copy feature - use raalm driven architecture!!!
-            for (Movie realmMovie : realmResults) {
+//TODO dont use it like this, you are losing realm zero copy feature - use raelm driven architecture!!!
+            for (FavouriteMovieRealm realmMovie : realmResults) {
                 movies.add(new Movie(realmMovie));
+            }
+            return Observable.just(movies);
+        }
+    }
+
+    public Observable<List<Movie>> getTopRatedMovies() {
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            Log.i(TAG, "getTopRatedMovies: ");
+            RealmResults<TopRatedMovieRealm> realmResults = realmInstance.where(TopRatedMovieRealm.class)
+                    .findAllAsync();
+            final List<Movie> movies = new ArrayList<>();
+//TODO dont use it like this, you are losing realm zero copy feature - use raelm driven architecture!!!
+            for (TopRatedMovieRealm realmMovie : realmResults) {
+                movies.add(new Movie(realmMovie));//TO DO change this
+            }
+            return Observable.just(movies);
+        }
+    }
+
+    public Observable<List<Movie>> getMostPopularMovies() {
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            Log.i(TAG, "getMostPopularMovies: ");
+            RealmResults<MostPopularMovieRealm> realmResults = realmInstance.where(MostPopularMovieRealm.class)
+                    .findAllAsync();
+            final List<Movie> movies = new ArrayList<>();
+//TODO dont use it like this, you are losing realm zero copy feature - use raelm driven architecture!!!
+            for (MostPopularMovieRealm realmMovie : realmResults) {
+                movies.add(new Movie(realmMovie));//TO DO change this
             }
 // Or RxJava
             return Observable.just(movies);
