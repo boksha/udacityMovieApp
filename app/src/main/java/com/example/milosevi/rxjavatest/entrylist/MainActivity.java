@@ -1,4 +1,4 @@
-package com.example.milosevi.rxjavatest.ui;
+package com.example.milosevi.rxjavatest.entrylist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,16 +17,14 @@ import android.widget.GridView;
 import com.example.milosevi.rxjavatest.R;
 import com.example.milosevi.rxjavatest.details.DetailsActivity;
 import com.example.milosevi.rxjavatest.model.Movie;
-import com.example.milosevi.rxjavatest.ui.adapters.MovieGridAdapter;
-import com.example.milosevi.rxjavatest.ui.mvp.GridContract;
-import com.example.milosevi.rxjavatest.ui.mvp.GridPresenter;
-import com.example.milosevi.rxjavatest.ui.mvp.GridRepository;
+import com.example.milosevi.rxjavatest.entrylist.adapters.MovieGridAdapter;
+import com.example.milosevi.rxjavatest.entrylist.mvp.GridContract;
+import com.example.milosevi.rxjavatest.entrylist.mvp.GridPresenter;
+import com.example.milosevi.rxjavatest.entrylist.mvp.GridRepository;
 
 import java.util.List;
 
-import io.reactivex.disposables.CompositeDisposable;
-
-import static com.example.milosevi.rxjavatest.ui.mvp.GridContract.Presenter.MENU_ITEM_TOP_RATED;
+import static com.example.milosevi.rxjavatest.entrylist.mvp.GridContract.Presenter.MENU_ITEM_TOP_RATED;
 
 /**
  * Greed screen

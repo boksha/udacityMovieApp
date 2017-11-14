@@ -1,4 +1,4 @@
-package com.example.milosevi.rxjavatest.ui.mvp;
+package com.example.milosevi.rxjavatest.entrylist.mvp;
 
 import android.util.Log;
 
@@ -73,22 +73,22 @@ public class GridPresenter implements GridContract.Presenter {
 
     private void getMostPopularMovies() {
         disposableList.add(mRepository.getMostPopular().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<Movies>() {
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
                     @Override
-                    public void onNext(Movies movies) {
-                        Log.i(TAG, "onNext: " + movies);
-                        mView.showMovieList(movies.getMovies());
+                    public void onNext(List<Movie> movies) {
+                        Log.i(TAG, "getMostPopularMovies onNext: " + movies);
+                        mView.showMovieList(movies);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
+                        Log.i(TAG, "getMostPopularMovies onError: " + e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
+                        Log.i(TAG, "getMostPopularMovies onComplete: ");
                     }
                 }));
     }
@@ -98,7 +98,7 @@ public class GridPresenter implements GridContract.Presenter {
 
                     @Override
                     public void onNext(List<Movie> movies) {
-                        Log.i(TAG, "onNext: " + movies);
+                        Log.i(TAG, "getFavourites onNext: " + movies);
                         mView.showMovieList(movies);
                     }
 
@@ -116,34 +116,34 @@ public class GridPresenter implements GridContract.Presenter {
 
     private void getTopRated() {
         disposableList.add(mRepository.getTopRated().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<Movies>() {
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
                     @Override
-                    public void onNext(Movies movies) {
-                        Log.i(TAG, "onNext: " + movies);
-                        mView.showMovieList(movies.getMovies());
+                    public void onNext(List<Movie> movies) {
+                        Log.i(TAG, "getTopRated onNext: " + movies);
+                        mView.showMovieList(movies);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
+                        Log.i(TAG, "getTopRated onError: " + e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
+                        Log.i(TAG, "getTopRated onComplete: ");
                     }
                 }));
     }
 
     private void searchMoviesWithWord(String searchWord) {
         disposableList.add(mRepository.getMoviesWithWord(searchWord).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<Movies>() {
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
                     @Override
-                    public void onNext(Movies movies) {
-                        Log.i(TAG, "onNext: " + movies);
-                        mView.showMovieList(movies.getMovies());
+                    public void onNext(List<Movie> movies) {
+                        Log.i(TAG, "searchMoviesWithWord onNext: " + movies);
+                        mView.showMovieList(movies);
                     }
 
                     @Override
@@ -158,4 +158,32 @@ public class GridPresenter implements GridContract.Presenter {
                 }));
 
     }
+
+//    public void getAllIssues() {
+    //TO DO dont do it like this but from repository chain to streams and call on NExt twice, one from DB one from webapi
+//        List<Issue> listFromRealm = issueService.getIssues();
+//        view.showIssues(listFromRealm); // notify view for update
+//
+//        // let's sync in background
+//        Subscription s = issueService.syncIssues()
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(new Subscriber<List<Issue>>() {
+//                    @Override
+//                    public void onCompleted() { }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        // something went wrong (probably network error)...
+//                    }
+//
+//                    @Override
+//                    public void onNext(List<Issue> issues) {
+//                        // we notify again our view for update
+//                        view.showIssues(issues);
+//                    }
+//                });
+//
+//        subscriptions.add(s);
+//    }
 }

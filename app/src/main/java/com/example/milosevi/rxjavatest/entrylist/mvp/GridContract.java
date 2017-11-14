@@ -1,4 +1,4 @@
-package com.example.milosevi.rxjavatest.ui.mvp;
+package com.example.milosevi.rxjavatest.entrylist.mvp;
 
 import android.support.annotation.IntDef;
 
@@ -8,9 +8,7 @@ import com.example.milosevi.rxjavatest.model.Movies;
 import java.lang.annotation.Retention;
 import java.util.List;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.realm.RealmResults;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
@@ -47,9 +45,9 @@ public class GridContract {
     }
 
     public interface Repository{
-        Observable<Movies> getMostPopular();
+        Observable<List<Movie>> getMostPopular();
         Observable<List<Movie>> getFavourites();
-        Observable<Movies> getTopRated();
-        Observable<Movies> getMoviesWithWord(String search);
+        Observable<List<Movie>> getTopRated();
+        Observable<List<Movie>> getMoviesWithWord(String search);
     }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 
@@ -56,6 +57,8 @@ public class DataBaseManager {
             });
         }
     }
+
+
 
     public boolean isMovieInFavouritesById(int id) {
         final FavouriteMovieRealm resultRealm;
@@ -106,6 +109,37 @@ public class DataBaseManager {
         }
     }
 
+    public void deleteTopRatedMovies() {
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            Log.i(TAG, "deleteTopRated: " );
+            realmInstance.executeTransaction((realm) -> {
+                realm.delete(TopRatedMovieRealm.class);
+            });
+        }
+    }
+
+    public void addToTopRated(Movie movie) {
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            Log.i(TAG, "addToTopRated: " + movie);
+            realmInstance.executeTransaction((realm) -> {
+                TopRatedMovieRealm result = new TopRatedMovieRealm(movie);
+                realm.insertOrUpdate(result);
+            });
+        }
+    }
+
+    public void saveTopRatedList(List<Movie> movies) {
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            Log.i(TAG, "saveTopRatedList: " + movies);
+            realmInstance.executeTransaction((realm) -> {
+                for (Movie m : movies) {
+                    TopRatedMovieRealm result = new TopRatedMovieRealm(m);
+                    realm.insertOrUpdate(result);
+                }
+            });
+        }
+    }
+
     public Observable<List<Movie>> getMostPopularMovies() {
         try (Realm realmInstance = Realm.getDefaultInstance()) {
             Log.i(TAG, "getMostPopularMovies: ");
@@ -118,6 +152,38 @@ public class DataBaseManager {
             }
 // Or RxJava
             return Observable.just(movies);
+        }
+    }
+
+
+    public void deleteMostPopularMovies() {
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            Log.i(TAG, "deleteMostPopular: " );
+            realmInstance.executeTransaction((realm) -> {
+                realm.delete(MostPopularMovieRealm.class);
+            });
+        }
+    }
+
+    public void addToMostPopular(Movie movie) {
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            Log.i(TAG, "addToMostPopular: " + movie);
+            realmInstance.executeTransaction((realm) -> {
+                MostPopularMovieRealm result = new MostPopularMovieRealm(movie);
+                realm.insertOrUpdate(result);
+            });
+        }
+    }
+
+    public void saveMostPopularList(List<Movie> movies) {
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            Log.i(TAG, "saveMostPopularList: " + movies);
+            realmInstance.executeTransaction((realm) -> {
+                for (Movie m : movies) {
+                    MostPopularMovieRealm result = new MostPopularMovieRealm(m);
+                    realm.insertOrUpdate(result);
+                }
+            });
         }
     }
 }

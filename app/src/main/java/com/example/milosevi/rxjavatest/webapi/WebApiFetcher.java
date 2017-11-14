@@ -1,11 +1,15 @@
 package com.example.milosevi.rxjavatest.webapi;
 
 import com.example.milosevi.rxjavatest.model.Genres;
+import com.example.milosevi.rxjavatest.model.Movie;
 import com.example.milosevi.rxjavatest.model.Movies;
 import com.example.milosevi.rxjavatest.details.model.Reviews;
 import com.example.milosevi.rxjavatest.details.model.Trailers;
 
+import java.util.List;
+
 import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -42,12 +46,14 @@ public class WebApiFetcher {
         return service.getGenres(API_KEY);
     }
 
-    public Observable<Movies> getPopularMovies() {
-        return service.getPopularMovies(API_KEY);
+    public Observable<List<Movie>> getPopularMovies() {
+       return  service.getPopularMovies(API_KEY).flatMap(movies ->
+              Observable.fromArray(movies.getMovies()));
     }
 
-    public Observable<Movies> getTopRatedMovies() {
-        return service.getTopRatedMovies(API_KEY);
+    public Observable<List<Movie>> getTopRatedMovies() {
+        return service.getTopRatedMovies(API_KEY).flatMap(movies ->
+             Observable.fromArray(movies.getMovies()));
     }
 
     public Observable<Trailers> getTrailers(Integer id) {
@@ -58,8 +64,9 @@ public class WebApiFetcher {
         return service.getReviews(id, API_KEY);
     }
 
-    public Observable<Movies> findMoviesWithWord(String word) {
-        return service.findMoviesWithWord(API_KEY, word);
+    public Observable<List<Movie>> findMoviesWithWord(String word) {
+        return service.findMoviesWithWord(API_KEY, word).flatMap(movies ->
+                Observable.fromArray(movies.getMovies()));
     }
 
 }
