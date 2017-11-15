@@ -158,32 +158,4 @@ public class GridPresenter implements GridContract.Presenter {
                 }));
 
     }
-
-//    public void getAllIssues() {
-    //TO DO dont do it like this but from repository chain to streams and call on NExt twice, one from DB one from webapi
-//        List<Issue> listFromRealm = issueService.getIssues();
-//        view.showIssues(listFromRealm); // notify view for update
-//
-//        // let's sync in background
-//        Subscription s = issueService.syncIssues()
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(new Subscriber<List<Issue>>() {
-//                    @Override
-//                    public void onCompleted() { }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        // something went wrong (probably network error)...
-//                    }
-//
-//                    @Override
-//                    public void onNext(List<Issue> issues) {
-//                        // we notify again our view for update
-//                        view.showIssues(issues);
-//                    }
-//                });
-//
-//        subscriptions.add(s);
-//    }
 }

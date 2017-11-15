@@ -32,13 +32,14 @@ public class GridRepository implements GridContract.Repository {
     public Observable<List<Movie>> getMostPopular() {
         Observable<List<Movie>> movieListDB =     mDatabaseSource.getMostPopularMovies()
                 .filter(movies -> movies.size() > 0);
-        Observable<List<Movie>> movieListCloud =  mWebApiSource.getPopularMovies().doOnNext((movies) -> {
+        Observable<List<Movie>> movieListCloud =  mWebApiSource.getPopularMovies()
+                .doOnNext((movies) -> {
             mDatabaseSource.deleteMostPopularMovies();
             mDatabaseSource.saveMostPopularList(movies);
             Log.i("Miki", "getMostPopular: save finished");
 
         });
-        return Observable.concat(movieListDB, movieListCloud);
+        return Observable.mergeDelayError(movieListDB, movieListCloud);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class GridRepository implements GridContract.Repository {
             mDatabaseSource.saveTopRatedList(movies);
             Log.i("Miki", "getTopRated: save finished");
         });
-        return Observable.concat(movieListDB, movieListCloud);
+        return Observable.mergeDelayError(movieListDB, movieListCloud);
     }
 
     @Override
