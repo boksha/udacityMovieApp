@@ -10,6 +10,7 @@ import com.example.milosevi.rxjavatest.webapi.WebApiFetcher;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -38,8 +39,9 @@ public class GridRepository implements GridContract.Repository {
             mDatabaseSource.saveMostPopularList(movies);
             Log.i("Miki", "getMostPopular: save finished");
 
-        });
-        return Observable.mergeDelayError(movieListDB, movieListCloud);
+        }) .onErrorResumeNext(Observable.empty());
+
+        return Observable.concat(movieListDB, movieListCloud);
     }
 
     @Override
@@ -52,12 +54,13 @@ public class GridRepository implements GridContract.Repository {
         Observable<List<Movie>> movieListDB =     mDatabaseSource.getTopRatedMovies()
                 .filter(movies -> movies.size() > 0);
 
-        Observable<List<Movie>> movieListCloud =  mWebApiSource.getTopRatedMovies().doOnNext((movies) -> {
+        Observable<List<Movie>> movieListCloud =  mWebApiSource.getTopRatedMovies().onErrorResumeNext(Observable.empty())
+                .doOnNext((movies) -> {
             mDatabaseSource.deleteTopRatedMovies();
             mDatabaseSource.saveTopRatedList(movies);
             Log.i("Miki", "getTopRated: save finished");
         });
-        return Observable.mergeDelayError(movieListDB, movieListCloud);
+        return Observable.concat(movieListDB, movieListCloud);
     }
 
     @Override
