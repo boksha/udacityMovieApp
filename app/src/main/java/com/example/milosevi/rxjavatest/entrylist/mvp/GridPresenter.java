@@ -72,6 +72,7 @@ public class GridPresenter implements GridContract.Presenter {
     }
 
     private void getMostPopularMovies() {
+        disposableList.clear();
         disposableList.add(mRepository.getMostPopular().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
@@ -93,6 +94,7 @@ public class GridPresenter implements GridContract.Presenter {
                 }));
     }
     private void getFavourites() {
+        disposableList.clear();
         disposableList.add(mRepository.getFavourites().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
@@ -115,6 +117,7 @@ public class GridPresenter implements GridContract.Presenter {
     }
 
     private void getTopRated() {
+        disposableList.clear();
         disposableList.add(mRepository.getTopRated().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
@@ -137,6 +140,7 @@ public class GridPresenter implements GridContract.Presenter {
     }
 
     private void searchMoviesWithWord(String searchWord) {
+        disposableList.clear();
         disposableList.add(mRepository.getMoviesWithWord(searchWord).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
