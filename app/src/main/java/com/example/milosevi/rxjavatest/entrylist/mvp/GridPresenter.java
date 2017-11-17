@@ -5,8 +5,10 @@ import android.util.Log;
 import com.example.milosevi.rxjavatest.model.Movie;
 import com.example.milosevi.rxjavatest.model.Movies;
 
+import java.util.Arrays;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;

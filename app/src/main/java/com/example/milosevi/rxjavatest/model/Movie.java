@@ -3,9 +3,7 @@ package com.example.milosevi.rxjavatest.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.milosevi.rxjavatest.database.model.FavouriteMovieRealm;
-import com.example.milosevi.rxjavatest.database.model.MostPopularMovieRealm;
-import com.example.milosevi.rxjavatest.database.model.TopRatedMovieRealm;
+import com.example.milosevi.rxjavatest.database.model.RealmMovie;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -119,7 +117,7 @@ public class Movie implements Parcelable {
         this.mIsMarked = m.mIsMarked;
     }
 
-    public Movie(FavouriteMovieRealm m) {
+    public Movie(RealmMovie m) {
         this.id = m.getId();
         this.mTitle = m.getTitle();
         this.mImageUrl = m.getImageUrl();
@@ -128,23 +126,7 @@ public class Movie implements Parcelable {
         this.mReleaseDate = m.getReleaseDate();
     }
 
-    public Movie(TopRatedMovieRealm m) {
-        this.id = m.getId();
-        this.mTitle = m.getTitle();
-        this.mImageUrl = m.getImageUrl();
-        this.mDescription = m.getDescription();
-        this.mUserRating = m.getUserRating();
-        this.mReleaseDate = m.getReleaseDate();
-    }
 
-    public Movie(MostPopularMovieRealm m) {
-        this.id = m.getId();
-        this.mTitle = m.getTitle();
-        this.mImageUrl = m.getImageUrl();
-        this.mDescription = m.getDescription();
-        this.mUserRating = m.getUserRating();
-        this.mReleaseDate = m.getReleaseDate();
-    }
 
     @Override
     public String toString() {

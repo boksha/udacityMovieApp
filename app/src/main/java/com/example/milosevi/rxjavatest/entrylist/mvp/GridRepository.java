@@ -21,7 +21,7 @@ import io.reactivex.functions.Consumer;
 
 public class GridRepository implements GridContract.Repository {
 
-    private static final String TAG = "GridRepository";
+    private static final String TAG = "Miki";
     private WebApiFetcher mWebApiSource;
     private DataBaseManager mDatabaseSource;
 
@@ -38,7 +38,7 @@ public class GridRepository implements GridContract.Repository {
                 .retryWhen(errors ->
                         errors.zipWith(Observable.range(1, 3), (n, i) -> i)
                                 .flatMap(retryCount -> {
-                                    Log.i("Miki", "getMostPopular: retry" + retryCount);
+                                    Log.i(TAG, "getMostPopular: retry" + retryCount);
                                     return Observable.timer((long) Math.pow(5, retryCount), TimeUnit.SECONDS);
                                 })
 //  for onError after retry?.flatMap(it -> it < count ? Observable.timer(it, TimeUnit.SECONDS) : t.flatMap(Observable::error));
@@ -46,7 +46,7 @@ public class GridRepository implements GridContract.Repository {
                 .doOnNext((movies) -> {
                     mDatabaseSource.deleteMostPopularMovies();
                     mDatabaseSource.saveMostPopularList(movies);
-                    Log.i("Miki", "getMostPopular: save finished");
+                    Log.i(TAG, "getMostPopular: save finished");
 
                 });
         return Observable.concat(movieListDB, movieListCloud);
@@ -66,14 +66,14 @@ public class GridRepository implements GridContract.Repository {
                 .retryWhen(errors ->
                         errors.zipWith(Observable.range(1, 3), (n, i) -> i)
                                 .flatMap(retryCount -> {
-                                    Log.i("Miki", "getTopRated: retry" + retryCount);
+                                    Log.i(TAG, "getTopRated: retry" + retryCount);
                                     return Observable.timer((long) Math.pow(5, retryCount), TimeUnit.SECONDS);
                                 })
                 )
                 .doOnNext((movies) -> {
                     mDatabaseSource.deleteTopRatedMovies();
                     mDatabaseSource.saveTopRatedList(movies);
-                    Log.i("Miki", "getTopRated: save finished");
+                    Log.i(TAG, "getTopRated: save finished");
                 });
         return Observable.concat(movieListDB, movieListCloud);
     }

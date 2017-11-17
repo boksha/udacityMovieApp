@@ -53,8 +53,6 @@ public class Trailer {
         return mType;
     }
 
-
-
     public Trailer(String id, String name, Integer mSize, String mKey, String mSite, String mType) {
         this.id = id;
         this.mName = name;

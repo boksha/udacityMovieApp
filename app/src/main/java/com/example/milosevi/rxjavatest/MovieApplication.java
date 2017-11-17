@@ -19,7 +19,7 @@ public class MovieApplication extends Application {
         super.onCreate();
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder()
-                .schemaVersion(2)
+                .schemaVersion(3)
                 .deleteRealmIfMigrationNeeded() // todo remove for production
                 .build();
         Realm.setDefaultConfiguration(config);
