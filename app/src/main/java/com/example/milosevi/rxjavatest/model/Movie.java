@@ -2,15 +2,32 @@ package com.example.milosevi.rxjavatest.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.IntDef;
+import android.support.annotation.StringDef;
 
 import com.example.milosevi.rxjavatest.database.model.RealmMovie;
 import com.google.gson.annotations.SerializedName;
+
+import java.lang.annotation.Retention;
+
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
  * Created by milosevi on 9/29/17.
  */
 
 public class Movie implements Parcelable {
+
+    @Retention(SOURCE)
+    @IntDef({
+            FAVOURITE,
+            TOP_RATED,
+            MOST_POPULAR
+    })
+    public @interface Type {}
+    public static final int FAVOURITE = 0;
+    public static final int TOP_RATED = 1;
+    public static final int MOST_POPULAR = 2;
 
     @SerializedName("id")
     private Integer id;//id
@@ -26,14 +43,6 @@ public class Movie implements Parcelable {
     private String mReleaseDate;//release_date
 
     public Movie(){};
-
-    public boolean isMarked() {
-        return mIsMarked;
-    }
-
-    public void setMarked(boolean marked) {
-        mIsMarked = marked;
-    }
 
     public void setId(Integer id) {
         this.id = id;
@@ -58,9 +67,6 @@ public class Movie implements Parcelable {
     public void setReleaseDate(String mReleaseDate) {
         this.mReleaseDate = mReleaseDate;
     }
-
-    //realm param TODO create separate objects
-    private boolean mIsMarked;
 
     public Integer getId() {
         return id;
@@ -97,16 +103,6 @@ public class Movie implements Parcelable {
         this.mReleaseDate = mReleaseDate;
     }
 
-    public Movie(Integer id, String mTitle, String mImageUrl, String mDescription, String mUserRating, String mReleaseDate, boolean isMarked) {
-        this.id = id;
-        this.mTitle = mTitle;
-        this.mImageUrl = mImageUrl;
-        this.mDescription = mDescription;
-        this.mUserRating = mUserRating;
-        this.mReleaseDate = mReleaseDate;
-        this.mIsMarked = isMarked;
-    }
-
     public Movie(Movie m) {
         this.id = m.id;
         this.mTitle = m.mTitle;
@@ -114,19 +110,7 @@ public class Movie implements Parcelable {
         this.mDescription = m.mDescription;
         this.mUserRating = m.mUserRating;
         this.mReleaseDate = m.mReleaseDate;
-        this.mIsMarked = m.mIsMarked;
     }
-
-    public Movie(RealmMovie m) {
-        this.id = m.getId();
-        this.mTitle = m.getTitle();
-        this.mImageUrl = m.getImageUrl();
-        this.mDescription = m.getDescription();
-        this.mUserRating = m.getUserRating();
-        this.mReleaseDate = m.getReleaseDate();
-    }
-
-
 
     @Override
     public String toString() {

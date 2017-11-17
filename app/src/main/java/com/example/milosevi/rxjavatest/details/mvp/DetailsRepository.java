@@ -1,6 +1,7 @@
 package com.example.milosevi.rxjavatest.details.mvp;
 
 import com.example.milosevi.rxjavatest.database.DataBaseManager;
+import com.example.milosevi.rxjavatest.database.DbDataSource;
 import com.example.milosevi.rxjavatest.details.model.Reviews;
 import com.example.milosevi.rxjavatest.details.model.Trailers;
 import com.example.milosevi.rxjavatest.model.Movie;
@@ -15,7 +16,7 @@ import io.reactivex.Observable;
 public class DetailsRepository implements DetailsContract.Repository {
 
     private WebApiFetcher mWebApiSource;
-    private DataBaseManager mDatabaseSource;
+    private DbDataSource mDatabaseSource;
 
     public DetailsRepository() {
         mWebApiSource = WebApiFetcher.getInstance();
@@ -24,17 +25,17 @@ public class DetailsRepository implements DetailsContract.Repository {
 
     @Override
     public void markMovie(Movie movie) {
-        mDatabaseSource.addToFavourites(movie);
+        mDatabaseSource.addMovie(movie, Movie.FAVOURITE);
     }
 
     @Override
     public void unmarkMovie(Movie movie) {
-        mDatabaseSource.removeFromFavourites(movie);
+        mDatabaseSource.removeMovie(movie, Movie.FAVOURITE);
     }
 
     @Override
     public boolean isMovieMarked(Integer id) {
-        return mDatabaseSource.isMovieInFavouritesById(id);
+        return mDatabaseSource.isMovieInDb(id, Movie.FAVOURITE);
     }
     @Override
     public Observable<Trailers> getTrailers(Integer id) {

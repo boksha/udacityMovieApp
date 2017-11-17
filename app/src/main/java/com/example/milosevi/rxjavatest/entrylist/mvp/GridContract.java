@@ -24,9 +24,6 @@ public class GridContract {
     }
 
     public interface Presenter{
-
-
-
         @Retention(SOURCE)
         @IntDef({MENU_ITEM_TOP_RATED, MENU_ITEM_MOST_POPULAR, MENU_ITEM_FAVOURITES})
         public @interface MenuMode {}

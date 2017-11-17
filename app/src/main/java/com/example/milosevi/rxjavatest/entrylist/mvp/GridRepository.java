@@ -1,19 +1,18 @@
 package com.example.milosevi.rxjavatest.entrylist.mvp;
 
+import android.icu.text.UnicodeSetSpanner;
 import android.util.Log;
 
 import com.example.milosevi.rxjavatest.database.DataBaseManager;
+import com.example.milosevi.rxjavatest.database.DbDataSource;
 import com.example.milosevi.rxjavatest.model.Movie;
-import com.example.milosevi.rxjavatest.model.Movies;
+import com.example.milosevi.rxjavatest.webapi.NetworkDataSource;
 import com.example.milosevi.rxjavatest.webapi.WebApiFetcher;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by milosevi on 10/10/17.
@@ -22,8 +21,8 @@ import io.reactivex.functions.Consumer;
 public class GridRepository implements GridContract.Repository {
 
     private static final String TAG = "Miki";
-    private WebApiFetcher mWebApiSource;
-    private DataBaseManager mDatabaseSource;
+    private NetworkDataSource mWebApiSource;
+    private DbDataSource mDatabaseSource;
 
     public GridRepository() {
         mWebApiSource = WebApiFetcher.getInstance();
@@ -32,9 +31,9 @@ public class GridRepository implements GridContract.Repository {
 
     @Override
     public Observable<List<Movie>> getMostPopular() {
-        Observable<List<Movie>> movieListDB = mDatabaseSource.getMostPopularMovies()
+        Observable<List<Movie>> movieListDB = mDatabaseSource.queryMovies(Movie.MOST_POPULAR)
                 .filter(movies -> movies.size() > 0);
-        Observable<List<Movie>> movieListCloud = mWebApiSource.getPopularMovies()
+        Observable<List<Movie>> movieListCloud = mWebApiSource.getMovies(Movie.MOST_POPULAR)
                 .retryWhen(errors ->
                         errors.zipWith(Observable.range(1, 3), (n, i) -> i)
                                 .flatMap(retryCount -> {
@@ -44,8 +43,8 @@ public class GridRepository implements GridContract.Repository {
 //  for onError after retry?.flatMap(it -> it < count ? Observable.timer(it, TimeUnit.SECONDS) : t.flatMap(Observable::error));
                 )
                 .doOnNext((movies) -> {
-                    mDatabaseSource.deleteMostPopularMovies();
-                    mDatabaseSource.saveMostPopularList(movies);
+                    mDatabaseSource.deleteAllMovies(Movie.MOST_POPULAR);
+                    mDatabaseSource.addMovieList(movies, Movie.MOST_POPULAR);
                     Log.i(TAG, "getMostPopular: save finished");
 
                 });
@@ -54,15 +53,15 @@ public class GridRepository implements GridContract.Repository {
 
     @Override
     public Observable<List<Movie>> getFavourites() {
-        return mDatabaseSource.getFavouriteMovies();
+        return mDatabaseSource.queryMovies(Movie.FAVOURITE);
     }
 
     @Override
     public Observable<List<Movie>> getTopRated() {
-        Observable<List<Movie>> movieListDB = mDatabaseSource.getTopRatedMovies()
+        Observable<List<Movie>> movieListDB = mDatabaseSource.queryMovies(Movie.TOP_RATED)
                 .filter(movies -> movies.size() > 0);
 
-        Observable<List<Movie>> movieListCloud = mWebApiSource.getTopRatedMovies()
+        Observable<List<Movie>> movieListCloud = mWebApiSource.getMovies(Movie.TOP_RATED)
                 .retryWhen(errors ->
                         errors.zipWith(Observable.range(1, 3), (n, i) -> i)
                                 .flatMap(retryCount -> {
@@ -71,8 +70,8 @@ public class GridRepository implements GridContract.Repository {
                                 })
                 )
                 .doOnNext((movies) -> {
-                    mDatabaseSource.deleteTopRatedMovies();
-                    mDatabaseSource.saveTopRatedList(movies);
+                    mDatabaseSource.deleteAllMovies(Movie.TOP_RATED);
+                    mDatabaseSource.addMovieList(movies, Movie.TOP_RATED);
                     Log.i(TAG, "getTopRated: save finished");
                 });
         return Observable.concat(movieListDB, movieListCloud);

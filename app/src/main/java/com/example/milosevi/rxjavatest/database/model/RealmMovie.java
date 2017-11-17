@@ -149,14 +149,4 @@ public class RealmMovie extends RealmObject {
         this.mReleaseDate = mReleaseDate;
     }
 
-
-    public RealmMovie(Movie m) {
-        this.mId = m.getId();
-        this.mTitle = m.getTitle();
-        this.mImageUrl = m.getImageUrl();
-        this.mDescription = m.getDescription();
-        this.mUserRating = m.getUserRating();
-        this.mReleaseDate = m.getReleaseDate();
-    }
-
 }

@@ -18,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by milosevi on 9/29/17.
  */
 
-public class WebApiFetcher {
+public class WebApiFetcher implements NetworkDataSource {
     private static final String API_KEY = "63c792551dfae04485cc8cc06de29fe1";
     private static final String BASE_URL_THEMOVIEDB_ORG_3 = "https://api.themoviedb.org/3/";
 
@@ -46,14 +46,16 @@ public class WebApiFetcher {
         return service.getGenres(API_KEY);
     }
 
-    public Observable<List<Movie>> getPopularMovies() {
-       return  service.getPopularMovies(API_KEY).flatMap(movies ->
-              Observable.fromArray(movies.getMovies()));
-    }
-
-    public Observable<List<Movie>> getTopRatedMovies() {
+    @Override
+    public Observable<List<Movie>> getMovies(int type) {
+        if (type == Movie.TOP_RATED) {
         return service.getTopRatedMovies(API_KEY).flatMap(movies ->
              Observable.fromArray(movies.getMovies()));
+        } else if (type == Movie.MOST_POPULAR) {
+            return service.getPopularMovies(API_KEY).flatMap(movies ->
+                    Observable.fromArray(movies.getMovies()));
+        }
+        return Observable.empty();
     }
 
     public Observable<Trailers> getTrailers(Integer id) {
