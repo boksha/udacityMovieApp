@@ -25,7 +25,9 @@ public class RealmMovie extends RealmObject {
     private String mTitle;//title
     private String mImageUrl;//poster_path
     private String mDescription;//overview in the api
-    private String mUserRating;//vote_average in the api)
+    private Double mUserRating;//vote_average in the api)
+    private Integer mVoteCount;//vote_count in the api)
+    private Double mPopularity;//popularity in the api)
     private String mReleaseDate;//release_date
     private boolean mIsFavourite;
     private boolean mIsTopRated;
@@ -51,7 +53,7 @@ public class RealmMovie extends RealmObject {
         this.mDescription = mDescription;
     }
 
-    public void setUserRating(String mUserRating) {
+    public void setUserRating(Double mUserRating) {
         this.mUserRating = mUserRating;
     }
 
@@ -67,6 +69,22 @@ public class RealmMovie extends RealmObject {
         return mTitle;
     }
 
+    public Integer getVoteCount() {
+        return mVoteCount;
+    }
+
+    public void setVoteCount(Integer mVoteCount) {
+        this.mVoteCount = mVoteCount;
+    }
+
+    public Double getPopularity() {
+        return mPopularity;
+    }
+
+    public void setPopularity(Double mPopularity) {
+        this.mPopularity = mPopularity;
+    }
+
     public String getImageUrl() {
         return mImageUrl;
     }
@@ -75,7 +93,7 @@ public class RealmMovie extends RealmObject {
         return mDescription;
     }
 
-    public String getUserRating() {
+    public Double getUserRating() {
         return mUserRating;
     }
 
@@ -111,7 +129,7 @@ public class RealmMovie extends RealmObject {
         return mTrailers;
     }
 
-    public void setTraiilers(RealmList<RealmTrailer> mTrailers) {
+    public void setTrailers(RealmList<RealmTrailer> mTrailers) {
         this.mTrailers = mTrailers;
     }
 
@@ -123,6 +141,20 @@ public class RealmMovie extends RealmObject {
         this.mReviews = mReview;
     }
 
+    public RealmMovie(Integer mId, String mTitle, String mImageUrl, String mDescription, Double mUserRating, Integer mVoteCount, Double mPopularity, String mReleaseDate) {
+        this.mId = mId;
+        this.mTitle = mTitle;
+        this.mImageUrl = mImageUrl;
+        this.mDescription = mDescription;
+        this.mUserRating = mUserRating;
+        this.mVoteCount = mVoteCount;
+        this.mPopularity = mPopularity;
+        this.mReleaseDate = mReleaseDate;
+    }
+
+    public RealmMovie() {
+    }
+
     @Override
     public String toString() {
         return "RealmMovie{" +
@@ -131,22 +163,14 @@ public class RealmMovie extends RealmObject {
                 ", mImageUrl='" + mImageUrl + '\'' +
                 ", mDescription='" + mDescription + '\'' +
                 ", mUserRating='" + mUserRating + '\'' +
+                ", mVoteCount='" + mVoteCount + '\'' +
+                ", mPopularity='" + mPopularity + '\'' +
                 ", mReleaseDate='" + mReleaseDate + '\'' +
+                ", mIsFavourite=" + mIsFavourite +
+                ", mIsTopRated=" + mIsTopRated +
+                ", mIsMostPopular=" + mIsMostPopular +
                 ", mTrailers=" + mTrailers +
                 ", mReviews=" + mReviews +
                 '}';
     }
-
-    public RealmMovie() {
-    }
-
-    public RealmMovie(Integer id, String mTitle, String mImageUrl, String mDescription, String mUserRating, String mReleaseDate) {
-        this.mId = id;
-        this.mTitle = mTitle;
-        this.mImageUrl = mImageUrl;
-        this.mDescription = mDescription;
-        this.mUserRating = mUserRating;
-        this.mReleaseDate = mReleaseDate;
-    }
-
 }

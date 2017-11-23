@@ -38,7 +38,12 @@ public class Movie implements Parcelable {
     @SerializedName("overview")
     private String mDescription;//overview in the api
     @SerializedName("vote_average")
-    private String mUserRating ;//vote_average in the api)
+    private Double mUserRating ;//vote_average in the api)
+    @SerializedName("vote_count")
+    private Integer mVoteCount ;//vote_count in the api)
+
+    @SerializedName("popularity")
+    private String mPopularity ;//popularity in the api)
     @SerializedName("release_date")
     private String mReleaseDate;//release_date
 
@@ -60,7 +65,7 @@ public class Movie implements Parcelable {
         this.mDescription = mDescription;
     }
 
-    public void setUserRating(String mUserRating) {
+    public void setUserRating(Double mUserRating) {
         this.mUserRating = mUserRating;
     }
 
@@ -84,7 +89,7 @@ public class Movie implements Parcelable {
         return mDescription;
     }
 
-    public String getUserRating() {
+    public Double getUserRating() {
         return mUserRating;
     }
 
@@ -92,14 +97,32 @@ public class Movie implements Parcelable {
         return mReleaseDate;
     }
 
+    public Integer getVoteCount() {
+        return mVoteCount;
+    }
+
+    public void setVoteCount(Integer mVoteCount) {
+        this.mVoteCount = mVoteCount;
+    }
+
+    public String getPopularity() {
+        return mPopularity;
+    }
+
+    public void setPopularity(String mPopularity) {
+        this.mPopularity = mPopularity;
+    }
 
 
-    public Movie(Integer id, String mTitle, String mImageUrl, String mDescription, String mUserRating, String mReleaseDate) {
+    public Movie(Integer id, String mTitle, String mImageUrl, String mDescription, Double mUserRating,
+                 Integer mVoteCount,String mPopularity, String mReleaseDate) {
         this.id = id;
         this.mTitle = mTitle;
         this.mImageUrl = mImageUrl;
         this.mDescription = mDescription;
         this.mUserRating = mUserRating;
+        this.mPopularity = mPopularity;
+        this.mVoteCount = mVoteCount;
         this.mReleaseDate = mReleaseDate;
     }
 
@@ -109,6 +132,8 @@ public class Movie implements Parcelable {
         this.mImageUrl = m.mImageUrl;
         this.mDescription = m.mDescription;
         this.mUserRating = m.mUserRating;
+        this.mPopularity = m.mPopularity;
+        this.mVoteCount = m.mVoteCount;
         this.mReleaseDate = m.mReleaseDate;
     }
 
@@ -120,9 +145,12 @@ public class Movie implements Parcelable {
                 ", mImageUrl='" + mImageUrl + '\'' +
                 ", mDescription='" + mDescription + '\'' +
                 ", mUserRating='" + mUserRating + '\'' +
+                ", mVoteCount='" + mVoteCount + '\'' +
+                ", mPopularity='" + mPopularity + '\'' +
                 ", mReleaseDate='" + mReleaseDate + '\'' +
                 '}';
     }
+
 
     @Override
     public int describeContents() {
@@ -135,7 +163,9 @@ public class Movie implements Parcelable {
         dest.writeString(this.mTitle);
         dest.writeString(this.mImageUrl);
         dest.writeString(this.mDescription);
-        dest.writeString(this.mUserRating);
+        dest.writeValue(this.mUserRating);
+        dest.writeValue(this.mVoteCount);
+        dest.writeString(this.mPopularity);
         dest.writeString(this.mReleaseDate);
     }
 
@@ -144,11 +174,13 @@ public class Movie implements Parcelable {
         this.mTitle = in.readString();
         this.mImageUrl = in.readString();
         this.mDescription = in.readString();
-        this.mUserRating = in.readString();
+        this.mUserRating = (Double) in.readValue(Double.class.getClassLoader());
+        this.mVoteCount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.mPopularity = in.readString();
         this.mReleaseDate = in.readString();
     }
 
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
         @Override
         public Movie createFromParcel(Parcel source) {
             return new Movie(source);

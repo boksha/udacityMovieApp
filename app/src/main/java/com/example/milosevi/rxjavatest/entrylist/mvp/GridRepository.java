@@ -45,7 +45,7 @@ public class GridRepository implements GridContract.Repository {
                 .doOnNext((movies) -> {
                     mDatabaseSource.deleteAllMovies(Movie.MOST_POPULAR);
                     mDatabaseSource.addMovieList(movies, Movie.MOST_POPULAR);
-                    Log.i(TAG, "getMostPopular: save finished");
+                    Log.i(TAG, "getMostPopular: save finished " + movies);
 
                 });
         return Observable.concat(movieListDB, movieListCloud);
@@ -72,7 +72,7 @@ public class GridRepository implements GridContract.Repository {
                 .doOnNext((movies) -> {
                     mDatabaseSource.deleteAllMovies(Movie.TOP_RATED);
                     mDatabaseSource.addMovieList(movies, Movie.TOP_RATED);
-                    Log.i(TAG, "getTopRated: save finished");
+                    Log.i(TAG, "getTopRated: save finished " + movies);
                 });
         return Observable.concat(movieListDB, movieListCloud);
     }

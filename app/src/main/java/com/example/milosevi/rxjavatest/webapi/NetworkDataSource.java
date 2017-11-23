@@ -1,6 +1,8 @@
 package com.example.milosevi.rxjavatest.webapi;
 
+import com.example.milosevi.rxjavatest.details.model.Review;
 import com.example.milosevi.rxjavatest.details.model.Reviews;
+import com.example.milosevi.rxjavatest.details.model.Trailer;
 import com.example.milosevi.rxjavatest.details.model.Trailers;
 import com.example.milosevi.rxjavatest.model.Genres;
 import com.example.milosevi.rxjavatest.model.Movie;
@@ -18,9 +20,9 @@ public interface NetworkDataSource {
 
     Observable<List<Movie>> getMovies(@Movie.Type int type);
 
-    Observable<Trailers> getTrailers(Integer id);
+    Observable<List<Trailer>> getTrailers(Integer id);
 
-    Observable<Reviews> getReviews(Integer id);
+    Observable<List<Review>> getReviews(Integer id);
 
     Observable<List<Movie>> findMoviesWithWord(String word);
 }

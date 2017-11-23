@@ -1,5 +1,7 @@
 package com.example.milosevi.rxjavatest.database.model;
 
+import android.util.Log;
+
 import com.example.milosevi.rxjavatest.Mapper;
 import com.example.milosevi.rxjavatest.model.Movie;
 
@@ -17,6 +19,8 @@ public class RealmMovieMapper extends Mapper<RealmMovie, Movie> {
         realmMovie.setImageUrl(m.getImageUrl());
         realmMovie.setDescription(m.getDescription());
         realmMovie.setUserRating(m.getUserRating());
+        realmMovie.setVoteCount(m.getVoteCount());
+        realmMovie.setPopularity(Double.valueOf( m.getPopularity()));
         realmMovie.setReleaseDate(m.getReleaseDate());
         return realmMovie;
     }
@@ -29,6 +33,8 @@ public class RealmMovieMapper extends Mapper<RealmMovie, Movie> {
         movie.setImageUrl(m.getImageUrl());
         movie.setDescription(m.getDescription());
         movie.setUserRating(m.getUserRating());
+        movie.setVoteCount(m.getVoteCount());
+        movie.setPopularity(String.valueOf(m.getPopularity()));
         movie.setReleaseDate(m.getReleaseDate());
         return movie;
     }

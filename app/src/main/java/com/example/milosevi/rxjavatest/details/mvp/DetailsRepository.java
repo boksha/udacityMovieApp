@@ -2,10 +2,14 @@ package com.example.milosevi.rxjavatest.details.mvp;
 
 import com.example.milosevi.rxjavatest.database.DataBaseManager;
 import com.example.milosevi.rxjavatest.database.DbDataSource;
+import com.example.milosevi.rxjavatest.details.model.Review;
 import com.example.milosevi.rxjavatest.details.model.Reviews;
+import com.example.milosevi.rxjavatest.details.model.Trailer;
 import com.example.milosevi.rxjavatest.details.model.Trailers;
 import com.example.milosevi.rxjavatest.model.Movie;
 import com.example.milosevi.rxjavatest.webapi.WebApiFetcher;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -38,12 +42,12 @@ public class DetailsRepository implements DetailsContract.Repository {
         return mDatabaseSource.isMovieInDb(id, Movie.FAVOURITE);
     }
     @Override
-    public Observable<Trailers> getTrailers(Integer id) {
+    public Observable<List<Trailer>> getTrailers(Integer id) {
         return mWebApiSource.getTrailers(id);
     }
 
     @Override
-    public Observable<Reviews> getReviews(Integer id) {
+    public Observable<List<Review>> getReviews(Integer id) {
         return mWebApiSource.getReviews(id);
     }
 

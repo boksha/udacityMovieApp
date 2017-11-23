@@ -6,6 +6,8 @@ import android.util.Log;
 import com.example.milosevi.rxjavatest.database.model.RealmMovie;
 import com.example.milosevi.rxjavatest.database.model.RealmMovieFields;
 import com.example.milosevi.rxjavatest.database.model.RealmMovieMapper;
+import com.example.milosevi.rxjavatest.database.model.RealmReview;
+import com.example.milosevi.rxjavatest.database.model.RealmTrailer;
 import com.example.milosevi.rxjavatest.model.Movie;
 
 import java.util.ArrayList;
@@ -13,7 +15,9 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 
 /**
@@ -58,11 +62,7 @@ public class DataBaseManager implements DbDataSource {
                         .equalTo(convertTypeToField(type), true)
                         .findFirst();
                 if (realmMovie != null) {
-                    if (getDeleteCondition(realmMovie, type)) {
-                        setMovieFieldType(realmMovie,false, convertTypeToField(type));
-                    } else {
-                        realmMovie.deleteFromRealm();
-                    }
+                    deleteMovieFromRealmByType(realmMovie, type);
                 }
             });
         }
@@ -88,10 +88,12 @@ public class DataBaseManager implements DbDataSource {
 
     @Override
     public Observable<List<Movie>> queryMovies(int type)  {
+
+        //TODO implement same search as from webapi
         try (Realm realmInstance = Realm.getDefaultInstance()) {
             RealmResults<RealmMovie> realmResults = realmInstance.where(RealmMovie.class)
                     .equalTo(convertTypeToField(type), true)
-                    .findAll();
+                    .findAllSorted(convertTypeToSortField(type),Sort.DESCENDING);
             final List<Movie> movies = new ArrayList<>();
 //TODO dont use it like this, you are losing realm zero copy feature - use raelm driven architecture!!!
             for (RealmMovie realmMovie : realmResults) {
@@ -106,16 +108,11 @@ public class DataBaseManager implements DbDataSource {
         try (Realm realmInstance = Realm.getDefaultInstance()) {
             Log.i(TAG, "deleteAll: " + type);
             realmInstance.executeTransaction((realm) -> {
-                String field = convertTypeToField(type);
                 List<RealmMovie> realmMovies = realm.where(RealmMovie.class)
-                        .equalTo(field, true)
+                        .equalTo(convertTypeToField(type), true)
                         .findAll();
                 for (RealmMovie realmMovie : realmMovies) {
-                    if (getDeleteCondition(realmMovie, type)) {
-                        setMovieFieldType(realmMovie,false,field);
-                    } else {
-                        realmMovie.deleteFromRealm();
-                    }
+                    deleteMovieFromRealmByType(realmMovie, type);
                 }
             });
         }
@@ -124,7 +121,7 @@ public class DataBaseManager implements DbDataSource {
     @Override
     public void addMovieList(List<Movie> movies, int type) {
         try (Realm realmInstance = Realm.getDefaultInstance()) {
-            Log.i(TAG, "saveTopRatedList: " + movies);
+            Log.i(TAG, "addMovieList: " + movies + " " + type);
             realmInstance.executeTransaction((realm) -> {
                 for (Movie m : movies) {
                     addMovieToRealmByType(realm, m, convertTypeToField(type));
@@ -134,7 +131,6 @@ public class DataBaseManager implements DbDataSource {
     }
 
 ////////////////// help f-ions
-
 
     private void addMovieToRealmByType(Realm realm, Movie m, String fieldType) {
         RealmMovie realmMovie = realm.where(RealmMovie.class).equalTo(RealmMovieFields.ID, m.getId()).findFirst();
@@ -154,6 +150,19 @@ public class DataBaseManager implements DbDataSource {
             realmMovie.setIsTopRated(shouldAddToList);
         } else if (fieldType == RealmMovieFields.IS_FAVOURITE) {
             realmMovie.setIsFavourite(shouldAddToList);
+        }
+    }
+
+
+    private void deleteMovieFromRealmByType(RealmMovie realmMovie, @Movie.Type int type) {
+        if (getDeleteCondition(realmMovie, type)) {
+            setMovieFieldType(realmMovie,false,convertTypeToField(type));
+        } else {
+            RealmList<RealmReview> reviews = realmMovie.getReviews();
+            reviews.deleteAllFromRealm();
+            RealmList<RealmTrailer> trailers = realmMovie.getTrailers();
+            trailers.deleteAllFromRealm();
+            realmMovie.deleteFromRealm();
         }
     }
 
@@ -180,4 +189,16 @@ public class DataBaseManager implements DbDataSource {
         }
         return typeField;
     }
+
+    private String convertTypeToSortField(int type) {
+        String sortField = "";//TO DO better throw exception!
+        if (type == Movie.FAVOURITE){
+            sortField = RealmMovieFields.ID;
+        } else  if (type == Movie.TOP_RATED){
+            sortField = RealmMovieFields.USER_RATING;//this one is not working from realm when all values are the same??? find extra criteria?
+        } else if (type == Movie.MOST_POPULAR) {
+            sortField = RealmMovieFields.POPULARITY;//this one is ok!
+        }
+        return sortField;
+     }
 }

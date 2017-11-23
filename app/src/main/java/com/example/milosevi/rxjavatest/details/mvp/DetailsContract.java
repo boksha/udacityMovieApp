@@ -51,8 +51,8 @@ public class DetailsContract {
         void markMovie(Movie movie);
         void unmarkMovie(Movie movie);
         boolean isMovieMarked(Integer id);
-        Observable<Trailers> getTrailers(Integer id);
-        Observable<Reviews> getReviews(Integer id);
+        Observable<List<Trailer>> getTrailers(Integer id);
+        Observable<List<Review>> getReviews(Integer id);
 //        Observable<Movies> getMoviesWithWord(String search);
     }
 }

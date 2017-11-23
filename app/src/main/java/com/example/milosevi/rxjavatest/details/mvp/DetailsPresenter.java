@@ -2,9 +2,13 @@ package com.example.milosevi.rxjavatest.details.mvp;
 
 import android.util.Log;
 
+import com.example.milosevi.rxjavatest.details.model.Review;
 import com.example.milosevi.rxjavatest.details.model.Reviews;
+import com.example.milosevi.rxjavatest.details.model.Trailer;
 import com.example.milosevi.rxjavatest.details.model.Trailers;
 import com.example.milosevi.rxjavatest.model.Movie;
+
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -78,13 +82,13 @@ public class DetailsPresenter implements DetailsContract.Presenter {
 
     private void fetchTrailers(Integer id) {
         disposableList.add(mRepository.getTrailers(id).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<Trailers>() {
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Trailer>>() {
 
                     @Override
-                    public void onNext(Trailers trailers) {
+                    public void onNext(List<Trailer> trailers) {
                         Log.i(TAG, "onNext: " + trailers);
 //                        watchYoutubeVideo(getApplicationContext(),trailers.getTrailers().get(0).getKey());
-                        mView.showTrailerList(trailers.getTrailers());
+                        mView.showTrailerList(trailers);
                     }
 
                     @Override
@@ -102,12 +106,12 @@ public class DetailsPresenter implements DetailsContract.Presenter {
 
     private void fetchReviews(Integer id) {
         disposableList.add(mRepository.getReviews(id).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<Reviews>() {
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Review>>() {
 
                     @Override
-                    public void onNext(Reviews reviews) {
+                    public void onNext(List<Review> reviews) {
                         Log.i(TAG, "onNext: " + reviews);
-                        mView.showReviewList(reviews.getReviewList());
+                        mView.showReviewList(reviews);
                     }
 
                     @Override

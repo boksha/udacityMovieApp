@@ -32,6 +32,7 @@ public class ImageLoader {
     public @interface ImageSize {}
 
     public static void loadImageintoView(Context context, String url, ImageView view){
+        if (url == null) return;
         url = url.split("/")[1];
         Log.i("Miki", "loadImageintoView: " + url);
         Uri path = createImageUri(url);

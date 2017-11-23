@@ -23,7 +23,7 @@ public interface MovieService {
     Observable<Genres> getGenres(@Query("api_key") String apiKey);
 
     @GET("movie/popular")
-    Observable<Movies> getPopularMovies(@Query("api_key") String apiKey);
+    Observable<Movies> getPopularMovies(@Query("api_key") String apiKey);//old a
 
     @GET("movie/top_rated")
     Observable<Movies> getTopRatedMovies(@Query("api_key") String apiKey);
@@ -31,7 +31,7 @@ public interface MovieService {
 //    /discover/movie?certification_country=US&certification.lte=G&sort_by=popularity.desc
     @GET("discover/movie")
     Observable<Movies> getMovies(@Query("api_key") String apiKey,
-                                      @Query("page") String page,
+                                      @Query("page") int page,
                                       @Query("sort_by") String sortBy);
 
     @GET("movie/{id}/videos")

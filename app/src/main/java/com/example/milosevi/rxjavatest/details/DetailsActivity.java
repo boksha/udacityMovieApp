@@ -60,7 +60,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         mReleaseDateTextView = findViewById(R.id.details_date);
         mReleaseDateTextView.setText(mDetailMovie.getReleaseDate());
         mRatingsTextView = findViewById(R.id.details_rating);
-        mRatingsTextView.setText(mDetailMovie.getUserRating());
+        mRatingsTextView.setText(mDetailMovie.getUserRating().toString());
         mImageView = findViewById(R.id.details_image);
         mtitleTextView.setText(mDetailMovie.getTitle());
         mDescTextView = findViewById(R.id.details_description);
