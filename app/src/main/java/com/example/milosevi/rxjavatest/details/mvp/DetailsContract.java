@@ -29,11 +29,11 @@ public class DetailsContract {
 //
 //
 //        @Retention(SOURCE)
-//        @IntDef({MENU_ITEM_TOP_RATED, MENU_ITEM_MOST_POPULAR, MENU_ITEM_FAVOURITES})
+//        @IntDef({MENU_ITEM_TOP_RATED, MENU_ITEM_MOST_POPULAR, LIST_FAVOURITES})
 //        public @interface MenuMode {}
 //        public static final int MENU_ITEM_TOP_RATED = 0;
 //        public static final int MENU_ITEM_MOST_POPULAR = 1;
-//        public static final int MENU_ITEM_FAVOURITES = 2;
+//        public static final int LIST_FAVOURITES = 2;
 
 //        void onMenuItemClicked(@GridContract.Presenter.MenuMode int menuMode);
         void onLoadTrailerList(Integer id);

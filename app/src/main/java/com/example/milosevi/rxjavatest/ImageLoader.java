@@ -32,9 +32,12 @@ public class ImageLoader {
     public @interface ImageSize {}
 
     public static void loadImageintoView(Context context, String url, ImageView view){
-        if (url == null) return;
+        if (url == null) {
+            Picasso.with(context).load(R.drawable.download).into(view);
+            return;
+        }
         url = url.split("/")[1];
-        Log.i("Miki", "loadImageintoView: " + url);
+//        Log.i("Miki", "loadImageintoView: " + url);
         Uri path = createImageUri(url);
 //        Picasso.with(context).setLoggingEnabled(true);
         Picasso.with(context).load(path).into(view);
@@ -46,7 +49,7 @@ public class ImageLoader {
                 .appendPath(imageUri)
                 .build();
 //        String result = BASE_URL_IMAGES_TMDB + W154+"/"+imageUri;
-        Log.i("Miki", "createImageUri: " + result);
+//        Log.i("Miki", "createImageUri: " + result);
         return result;
     }
 

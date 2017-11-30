@@ -3,7 +3,6 @@ package com.example.milosevi.rxjavatest.entrylist.mvp;
 import android.support.annotation.IntDef;
 
 import com.example.milosevi.rxjavatest.model.Movie;
-import com.example.milosevi.rxjavatest.model.Movies;
 
 import java.lang.annotation.Retention;
 import java.util.List;
@@ -20,19 +19,23 @@ public class GridContract {
 
     public interface View {
         void showMovieList(List<Movie> movies);
+        void addMoviesToList(List<Movie> movies);
+        void clearMovieList();
         void navigateToMovie(Movie movie);
+        void resetScrollPosition();
     }
 
     public interface Presenter{
         @Retention(SOURCE)
-        @IntDef({MENU_ITEM_TOP_RATED, MENU_ITEM_MOST_POPULAR, MENU_ITEM_FAVOURITES})
-        public @interface MenuMode {}
-        public static final int MENU_ITEM_TOP_RATED = 0;
-        public static final int MENU_ITEM_MOST_POPULAR = 1;
-        public static final int MENU_ITEM_FAVOURITES = 2;
+        @IntDef({LIST_TOP_RATED, LIST_MOST_POPULAR, LIST_FAVOURITES})
+        @interface ListMode {}
+        int LIST_TOP_RATED = 0;
+        int LIST_MOST_POPULAR = 1;
+        int LIST_FAVOURITES = 2;
 
-        void onMenuItemClicked(@MenuMode int menuMode);
+        void onMenuItemClicked(@ListMode int listMode);
         void onLoadMovieList();
+        boolean onLoadMovieListByPage(int page);
         void onMovieClicked(Movie movie);
         void onSearch(String searchWord);
         void onViewAttached(View view);
@@ -42,9 +45,9 @@ public class GridContract {
     }
 
     public interface Repository{
-        Observable<List<Movie>> getMostPopular();
+        Observable<List<Movie>> getMostPopular(int page);
         Observable<List<Movie>> getFavourites();
-        Observable<List<Movie>> getTopRated();
+        Observable<List<Movie>> getTopRated(int page);
         Observable<List<Movie>> getMoviesWithWord(String search);
     }
 }

@@ -3,12 +3,9 @@ package com.example.milosevi.rxjavatest.entrylist.mvp;
 import android.util.Log;
 
 import com.example.milosevi.rxjavatest.model.Movie;
-import com.example.milosevi.rxjavatest.model.Movies;
 
-import java.util.Arrays;
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
@@ -21,9 +18,14 @@ import io.reactivex.schedulers.Schedulers;
 public class GridPresenter implements GridContract.Presenter {
 
     private static final String TAG = "Miki";
+    private static final int STARTING_PAGE = 0;
     private CompositeDisposable disposableList = new CompositeDisposable();
     private GridContract.Repository mRepository;
     private GridContract.View mView;
+
+    @ListMode
+    private int mCurrentListMode = LIST_MOST_POPULAR;
+
 
     public GridPresenter(GridContract.Repository repository) {
         mRepository = repository;
@@ -43,20 +45,29 @@ public class GridPresenter implements GridContract.Presenter {
     }
 
     @Override
-    public void onMenuItemClicked(@MenuMode int menuMode) {
-        if (menuMode == MENU_ITEM_MOST_POPULAR) {
-            getMostPopularMovies();
-        } else if (menuMode == MENU_ITEM_TOP_RATED) {
-            getTopRated();
-        } else if (menuMode == MENU_ITEM_FAVOURITES){
-            getFavourites();
+    public void onMenuItemClicked(@ListMode int listMode) {
+        if (listMode != mCurrentListMode) {
+//            mCurrentPage = 1;
+//            previousTotal = 0;
+//            loading = true;
+            mView.clearMovieList();
+            mView.resetScrollPosition();
+            mCurrentListMode = listMode;
+            loadPage(STARTING_PAGE);
         }
     }
 
     @Override
     public void onLoadMovieList() {
-        getMostPopularMovies();
+        loadPage(STARTING_PAGE);
     }
+
+    @Override
+    public boolean onLoadMovieListByPage(int page) {
+        loadPage(page);
+        return true;
+    }
+
 
     @Override
     public void onSearch(String searchWord) {
@@ -73,15 +84,19 @@ public class GridPresenter implements GridContract.Presenter {
         mView = null;
     }
 
-    private void getMostPopularMovies() {
+    private void getMostPopularMovies(int page) {
         disposableList.clear();
-        disposableList.add(mRepository.getMostPopular().subscribeOn(Schedulers.io())
+        disposableList.add(mRepository.getMostPopular(page).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
                     @Override
                     public void onNext(List<Movie> movies) {
                         Log.i(TAG, "getMostPopularMovies onNext: " + movies);
-                        mView.showMovieList(movies);
+                        if (page == STARTING_PAGE){
+                            mView.showMovieList(movies);
+                        } else {
+                            mView.addMoviesToList(movies);
+                        }
                     }
 
                     @Override
@@ -95,6 +110,7 @@ public class GridPresenter implements GridContract.Presenter {
                     }
                 }));
     }
+
     private void getFavourites() {
         disposableList.clear();
         disposableList.add(mRepository.getFavourites().subscribeOn(Schedulers.io())
@@ -118,15 +134,19 @@ public class GridPresenter implements GridContract.Presenter {
                 }));
     }
 
-    private void getTopRated() {
+    private void getTopRated(int page) {
         disposableList.clear();
-        disposableList.add(mRepository.getTopRated().subscribeOn(Schedulers.io())
+        disposableList.add(mRepository.getTopRated(page).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
                     @Override
                     public void onNext(List<Movie> movies) {
                         Log.i(TAG, "getTopRated onNext: " + movies);
-                        mView.showMovieList(movies);
+                        if (page == STARTING_PAGE){
+                            mView.showMovieList(movies);
+                        } else {
+                            mView.addMoviesToList(movies);
+                        }
                     }
 
                     @Override
@@ -163,5 +183,19 @@ public class GridPresenter implements GridContract.Presenter {
                     }
                 }));
 
+    }
+
+    private void loadList(@ListMode int listMode, int page) {
+        if (listMode == LIST_MOST_POPULAR) {
+            getMostPopularMovies(page);
+        } else if (listMode == LIST_TOP_RATED) {
+            getTopRated(page);
+        } else if (listMode == LIST_FAVOURITES) {
+            getFavourites();
+        }
+    }
+
+    private void loadPage(int page) {
+        loadList(mCurrentListMode,page);
     }
 }

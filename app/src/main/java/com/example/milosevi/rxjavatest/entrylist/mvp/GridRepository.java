@@ -30,10 +30,10 @@ public class GridRepository implements GridContract.Repository {
     }
 
     @Override
-    public Observable<List<Movie>> getMostPopular() {
+    public Observable<List<Movie>> getMostPopular(int page) {
         Observable<List<Movie>> movieListDB = mDatabaseSource.queryMovies(Movie.MOST_POPULAR)
                 .filter(movies -> movies.size() > 0);
-        Observable<List<Movie>> movieListCloud = mWebApiSource.getMovies(Movie.MOST_POPULAR)
+        Observable<List<Movie>> movieListCloud = mWebApiSource.getMovies(Movie.MOST_POPULAR, page)
                 .retryWhen(errors ->
                         errors.zipWith(Observable.range(1, 3), (n, i) -> i)
                                 .flatMap(retryCount -> {
@@ -48,6 +48,7 @@ public class GridRepository implements GridContract.Repository {
                     Log.i(TAG, "getMostPopular: save finished " + movies);
 
                 });
+        if (page > 0) return movieListCloud;
         return Observable.concat(movieListDB, movieListCloud);
     }
 
@@ -57,11 +58,11 @@ public class GridRepository implements GridContract.Repository {
     }
 
     @Override
-    public Observable<List<Movie>> getTopRated() {
+    public Observable<List<Movie>> getTopRated(int page) {
         Observable<List<Movie>> movieListDB = mDatabaseSource.queryMovies(Movie.TOP_RATED)
                 .filter(movies -> movies.size() > 0);
 
-        Observable<List<Movie>> movieListCloud = mWebApiSource.getMovies(Movie.TOP_RATED)
+        Observable<List<Movie>> movieListCloud = mWebApiSource.getMovies(Movie.TOP_RATED, page)
                 .retryWhen(errors ->
                         errors.zipWith(Observable.range(1, 3), (n, i) -> i)
                                 .flatMap(retryCount -> {
@@ -74,6 +75,7 @@ public class GridRepository implements GridContract.Repository {
                     mDatabaseSource.addMovieList(movies, Movie.TOP_RATED);
                     Log.i(TAG, "getTopRated: save finished " + movies);
                 });
+        if (page > 0) return movieListCloud;
         return Observable.concat(movieListDB, movieListCloud);
     }
 

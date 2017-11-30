@@ -44,14 +44,11 @@ public class TrailerAdapter  extends
                 ListItemViewHolder viewHolder, int position) {
             Trailer model = items.get(position);
             viewHolder.trailerName.setText(model.getName());
-            viewHolder.trailerLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            viewHolder.trailerLayout.setOnClickListener(view -> {
                     if (mOnItemClickListener != null){
                         mOnItemClickListener.onItemClick(items.get(position));
                     }
-                }
-            });
+                });
         }
 
         @Override

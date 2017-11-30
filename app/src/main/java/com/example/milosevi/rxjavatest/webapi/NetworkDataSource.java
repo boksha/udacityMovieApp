@@ -18,7 +18,7 @@ import io.reactivex.Observable;
 public interface NetworkDataSource {
     Observable<Genres> getGenres();
 
-    Observable<List<Movie>> getMovies(@Movie.Type int type);
+    Observable<List<Movie>> getMovies(@Movie.Type int type, int page);
 
     Observable<List<Trailer>> getTrailers(Integer id);
 

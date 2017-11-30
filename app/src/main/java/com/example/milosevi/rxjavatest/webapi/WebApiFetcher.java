@@ -56,14 +56,14 @@ public class WebApiFetcher implements NetworkDataSource {
     }
 
     @Override
-    public Observable<List<Movie>> getMovies(int type) {
+    public Observable<List<Movie>> getMovies(int type, int page) {
 
         //TODO pagination!
         if (type == Movie.TOP_RATED) {
-        return  service.getMovies(API_KEY, 1, SORT_BY_TOP_RATED).flatMap(movies ->
+        return  service.getMovies(API_KEY, page, SORT_BY_TOP_RATED).flatMap(movies ->
              Observable.fromArray(movies.getMovies()));
         } else if (type == Movie.MOST_POPULAR) {
-            return service.getMovies(API_KEY, 1, SORT_BY_POPULAR).flatMap(movies ->
+            return service.getMovies(API_KEY, page, SORT_BY_POPULAR).flatMap(movies ->
                     Observable.fromArray(movies.getMovies()));
         }
         return Observable.empty();
