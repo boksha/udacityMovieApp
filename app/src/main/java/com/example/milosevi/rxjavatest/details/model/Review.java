@@ -75,10 +75,29 @@ public class Review {
                 '}';
     }
 
+    public Review() {
+    }
+
     public Review(String id, String name, String mContent, String mUrl) {
         this.id = id;
         this.mName = name;
         this.mContent = mContent;
+        this.mUrl = mUrl;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setAuthor(String mName) {
+        this.mName = mName;
+    }
+
+    public void setContent(String mContent) {
+        this.mContent = mContent;
+    }
+
+    public void setUrl(String mUrl) {
         this.mUrl = mUrl;
     }
 }

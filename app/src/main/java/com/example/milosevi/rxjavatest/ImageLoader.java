@@ -43,7 +43,7 @@ public class ImageLoader {
         Picasso.with(context).load(path).into(view);
     }
 
-    public static Uri createImageUri(String imageUri){
+    private static Uri createImageUri(String imageUri){
         Uri.Builder builder = Uri.parse(BASE_URL_IMAGES_TMDB).buildUpon();
         Uri result =  builder.appendPath(W154)
                 .appendPath(imageUri)

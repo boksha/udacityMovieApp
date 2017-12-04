@@ -41,6 +41,30 @@ public class Trailer {
         return mSize;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        mName = name;
+    }
+
+    public void setSize(Integer size) {
+        mSize = size;
+    }
+
+    public void setKey(String key) {
+        mKey = key;
+    }
+
+    public void setSite(String site) {
+        mSite = site;
+    }
+
+    public void setType(String type) {
+        mType = type;
+    }
+
     public String getKey() {
         return mKey;
     }
@@ -51,6 +75,9 @@ public class Trailer {
 
     public String getType() {
         return mType;
+    }
+
+    public Trailer() {
     }
 
     public Trailer(String id, String name, Integer mSize, String mKey, String mSite, String mType) {

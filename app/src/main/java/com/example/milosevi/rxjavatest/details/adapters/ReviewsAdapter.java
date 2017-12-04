@@ -75,7 +75,9 @@ public class ReviewsAdapter extends RecyclerView.Adapter
 
     public void setReviews(List<Review> reviews) {
         items.clear();
-        items.addAll(reviews);
+        if (reviews != null) {
+            items.addAll(reviews);
+        }
         notifyDataSetChanged();
     }
 

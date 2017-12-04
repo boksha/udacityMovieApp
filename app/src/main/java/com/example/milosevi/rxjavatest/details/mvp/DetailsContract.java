@@ -17,42 +17,26 @@ import io.reactivex.Observable;
 public class DetailsContract {
 
     public interface View {
-        void showTrailerList(List<Trailer> trailers);
-        void showReviewList(List<Review> reviews);
-//        void navigateToMovie(Movie movie);
+        void showMovie(Movie movie);
         void navigateToTrailer(String key);
         void updateMarkButton(boolean marked);
     }
 
     public interface Presenter{
 
-//
-//
-//        @Retention(SOURCE)
-//        @IntDef({MENU_ITEM_TOP_RATED, MENU_ITEM_MOST_POPULAR, LIST_FAVOURITES})
-//        public @interface MenuMode {}
-//        public static final int MENU_ITEM_TOP_RATED = 0;
-//        public static final int MENU_ITEM_MOST_POPULAR = 1;
-//        public static final int LIST_FAVOURITES = 2;
-
-//        void onMenuItemClicked(@GridContract.Presenter.MenuMode int menuMode);
-        void onLoadTrailerList(Integer id);
-        void onLoadReviewList(Integer id);
         void onLoadMovie(Integer id);
         void onMovieMarked(Movie movie);
+        void onTrailerSelected(String key);
         void onViewAttached(DetailsContract.View view);
         void onViewDetached(DetailsContract.View view);
         void onActivityDestroyed();
 
-        void onTrailerSelected(String key);
     }
 
     public interface Repository{
         void markMovie(Movie movie);
         void unmarkMovie(Movie movie);
         boolean isMovieMarked(Integer id);
-        Observable<List<Trailer>> getTrailers(Integer id);
-        Observable<List<Review>> getReviews(Integer id);
-//        Observable<Movies> getMoviesWithWord(String search);
+        Observable<Movie> getMovieById(Integer id);
     }
 }

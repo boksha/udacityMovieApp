@@ -17,14 +17,15 @@ public interface DbDataSource {
 
     void addMovieList(List<Movie> movies, @Movie.Type int type);
 
-    void  removeMovie(Movie movie, @Movie.Type int type);
+    void removeMovie(Movie movie, @Movie.Type int type);
 
     void deleteAllMovies(@Movie.Type int type);
 
     boolean isMovieInDb(int id, @Movie.Type int type);
 
-    RealmMovie getMovie(int id, @Movie.Type int type);
+    Observable<Movie> getMovie(int id);
 
     Observable<List<Movie>> queryMovies(@Movie.Type int type);
 
+    void updateMovie(Movie movie);
 }

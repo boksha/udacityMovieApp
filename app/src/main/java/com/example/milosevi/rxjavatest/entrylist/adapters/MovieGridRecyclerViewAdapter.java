@@ -51,7 +51,7 @@ public class MovieGridRecyclerViewAdapter extends RecyclerView.Adapter<MovieGrid
         return new ViewHolder(view);
     }
 
-    // binds the data to the textview in each cell
+    // binds the data to the views
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Movie movie = mMovies.get(position);
@@ -88,7 +88,6 @@ public class MovieGridRecyclerViewAdapter extends RecyclerView.Adapter<MovieGrid
             linearLayout = itemView.findViewById(R.id.grid_item_layout);
             iconView = itemView.findViewById(R.id.grid_item_image);
             versionNameView = itemView.findViewById(R.id.grid_item_label);
-
         }
     }
 

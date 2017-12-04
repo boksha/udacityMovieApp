@@ -26,16 +26,13 @@ public class RealmReview extends RealmObject {
         return mAuthor;
     }
 
-
     public String getContent() {
         return mContent;
     }
 
-
     public String getUrl() {
         return mUrl;
     }
-
 
     public void setId(String id) {
         this.id = id;

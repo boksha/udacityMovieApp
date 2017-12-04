@@ -35,9 +35,7 @@ public class MainActivity extends AppCompatActivity implements GridContract.View
 //    private static final String API_READ_ACCESS_TOKEN =
 //            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2M2M3OTI1NTFkZmFlMDQ0ODVjYzhjYzA2ZGUyOWZlMSIsInN1YiI6IjU5Y2UwNjcyYzNhMzY4NmFiYzAwZWMzMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.04bjvLkxpVmkABNlLjNMSMkVcFkqKF6DVBMQ--XXk5w";
     private static final String TAG = "Miki";
-    //    private GitHubAdapter movieGridAdapter = new GitHubAdapter();
     private MovieGridRecyclerViewAdapter movieGridAdapter;
-    private GridLayoutManager mGridLayoutManager;
     private GridContract.Presenter mPresenter;
     private RecyclerView mGridView;
 
@@ -54,16 +52,26 @@ public class MainActivity extends AppCompatActivity implements GridContract.View
             mPresenter.onMovieClicked(movie);
             Log.i(TAG, "onItemClick: movie" + movie);
         }));
-        mPresenter = new GridPresenter(new GridRepository());
+        mPresenter = new GridPresenter(this,new GridRepository());
         mGridView.setAdapter(movieGridAdapter);
-        mGridLayoutManager = new GridLayoutManager(this, 3);
-        recyclerViewOnScrollListener = new EndlessScrollListener(mGridLayoutManager) {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+        recyclerViewOnScrollListener = new EndlessScrollListener(gridLayoutManager) {
             @Override
-            public boolean onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                return  mPresenter.onLoadMovieListByPage(page);
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                 mPresenter.onLoadMovieListByPage(page);
+            }
+
+            @Override
+            public boolean isLoading() {
+                return mPresenter.isLoading();
+            }
+
+            @Override
+            public boolean isEndOfTheList() {
+                return false;
             }
         };
-        mGridView.setLayoutManager(mGridLayoutManager);
+        mGridView.setLayoutManager(gridLayoutManager);
         mGridView.addOnScrollListener(recyclerViewOnScrollListener);
         final EditText editTextUsername = findViewById(R.id.edit_text_username);
         final Button buttonSearch = findViewById(R.id.button_search);
@@ -73,13 +81,15 @@ public class MainActivity extends AppCompatActivity implements GridContract.View
                 mPresenter.onSearch(searchWord);
             }
         });
+        mPresenter.onLoadMovieList();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mPresenter.onViewAttached(this);
-        mPresenter.onLoadMovieList();
+//        recyclerViewOnScrollListener.resetState();
+//        mPresenter.onLoadMovieList();
     }
 
     @Override
@@ -125,11 +135,11 @@ public class MainActivity extends AppCompatActivity implements GridContract.View
     public void showMovieList(List<Movie> movies) {
         Log.i(TAG, "showMovieList: " + movies);
         movieGridAdapter.setData(movies);
-//        movieGridAdapter.addData(movies);
     }
 
     @Override
     public void addMoviesToList(List<Movie> movies) {
+        Log.i(TAG, "addMoviesToList: " + movies);
         movieGridAdapter.addData(movies);
     }
 

@@ -7,7 +7,11 @@ import com.example.milosevi.rxjavatest.database.model.RealmMovie;
 import com.example.milosevi.rxjavatest.database.model.RealmMovieFields;
 import com.example.milosevi.rxjavatest.database.model.RealmMovieMapper;
 import com.example.milosevi.rxjavatest.database.model.RealmReview;
+import com.example.milosevi.rxjavatest.database.model.RealmReviewMapper;
 import com.example.milosevi.rxjavatest.database.model.RealmTrailer;
+import com.example.milosevi.rxjavatest.database.model.RealmTrailerMapper;
+import com.example.milosevi.rxjavatest.details.model.Review;
+import com.example.milosevi.rxjavatest.details.model.Trailer;
 import com.example.milosevi.rxjavatest.model.Movie;
 
 import java.util.ArrayList;
@@ -30,9 +34,13 @@ public class DataBaseManager implements DbDataSource {
 
     private static DataBaseManager sInstance;
     private RealmMovieMapper mRealmMovieMapper;
+    private RealmReviewMapper mRealmReviewMapper;
+    private RealmTrailerMapper mRealmTrailerMapper;
 
     private DataBaseManager() {
-        mRealmMovieMapper = new RealmMovieMapper();
+        mRealmReviewMapper = new RealmReviewMapper();
+        mRealmTrailerMapper = new RealmTrailerMapper();
+        mRealmMovieMapper = new RealmMovieMapper();//new RealmReviewMapper(), new RealmTrailerMapper()
     }
 
     public static DataBaseManager getInstance() {
@@ -69,22 +77,36 @@ public class DataBaseManager implements DbDataSource {
     }
 
     @Override
-    public boolean isMovieInDb(int id,@Movie.Type int type) {
-        return getMovie(id, type) != null;
-    }
-
-    @Override
-    public RealmMovie getMovie(int id,@Movie.Type int type) {
+    public boolean isMovieInDb(int id, @Movie.Type int type) {
         final RealmMovie resultRealm;
         try (Realm realmInstance = Realm.getDefaultInstance()) {
             resultRealm = realmInstance.where(RealmMovie.class)
                     .equalTo(RealmMovieFields.ID, id)
                     .equalTo(convertTypeToField(type), true)
                     .findFirst();
-            Log.i(TAG, "getMovie:type " + type + " " + resultRealm);
+            Log.i(TAG, "isMovieInDb:type " +  resultRealm);
         }
-        return resultRealm;
+
+         return resultRealm != null;
     }
+
+    @Override
+    public Observable<Movie> getMovie(int id) {
+        final RealmMovie resultRealm;
+        final Movie movie;
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            resultRealm = realmInstance.where(RealmMovie.class)
+                    .equalTo(RealmMovieFields.ID, id)
+                    .findFirst();
+            Log.i(TAG, "getMovie: " +  resultRealm + " reviews " + resultRealm.getReviews()
+                    + " trailers " + resultRealm.getTrailers());
+            movie = mRealmMovieMapper.reverseMap(resultRealm);
+            movie.setReviews(mRealmReviewMapper.reverseMapList(resultRealm.getReviews()));
+            movie.setTrailers(mRealmTrailerMapper.reverseMapList(resultRealm.getTrailers()));
+        }
+        return Observable.just(movie);
+    }
+
 
     @Override
     public Observable<List<Movie>> queryMovies(int type)  {
@@ -94,12 +116,49 @@ public class DataBaseManager implements DbDataSource {
             RealmResults<RealmMovie> realmResults = realmInstance.where(RealmMovie.class)
                     .equalTo(convertTypeToField(type), true)
                     .findAllSorted(convertTypeToSortField(type),Sort.DESCENDING);
+//            fun getObjectsObservable(): Observable<List<DataObject>> {
+//                val realm = Realm.getDefaultInstance()
+//                return realm.where(DataObject::class.java).findAllSorted("id").asObservable().doOnUnsubscribe { realm.close() }.map { it }
+//            } change to sometyhing like this!
             final List<Movie> movies = new ArrayList<>();
 //TODO dont use it like this, you are losing realm zero copy feature - use raelm driven architecture!!!
             for (RealmMovie realmMovie : realmResults) {
                 movies.add(mRealmMovieMapper.reverseMap(realmMovie));//TO DO change this to Mapper
             }
+//            return Observable.defer(()->Observable.just(movies));
             return Observable.just(movies);
+        }
+    }
+
+    @Override
+    public void updateMovie(Movie movie) {
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            Log.i(TAG, "updateMovie: " + movie);
+            realmInstance.executeTransaction((realm) -> {
+                RealmMovie resultRealm = realmInstance.where(RealmMovie.class)
+                        .equalTo(RealmMovieFields.ID, movie.getId())
+                        .findFirst();
+                if (resultRealm != null){
+                    RealmList<RealmReview> listReviews = new RealmList<>();
+//                    listReviews.clear();
+                    for(Review review : movie.getReviews()){
+                        RealmReview realmReview = mRealmReviewMapper.map(review);
+                        listReviews.add(realm.copyToRealmOrUpdate(realmReview));
+                    }
+                    resultRealm.setReviews(listReviews);
+
+                    Log.i(TAG, "updateMovie:reviews " + resultRealm.getReviews());
+                    RealmList<RealmTrailer> listTrailers = resultRealm.getTrailers();
+                    listTrailers.clear();
+                    for(Trailer trailer : movie.getTrailers()){
+                        RealmTrailer realmTrailer = mRealmTrailerMapper.map(trailer);
+                        listTrailers.add(realm.copyToRealmOrUpdate(realmTrailer));
+                    }
+                    resultRealm.setTrailers(listTrailers);
+
+                    Log.i(TAG, "updateMovie:trailers " + resultRealm.getTrailers());
+                }
+            });
         }
     }
 

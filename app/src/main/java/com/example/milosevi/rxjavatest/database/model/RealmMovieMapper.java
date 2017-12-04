@@ -11,6 +11,9 @@ import com.example.milosevi.rxjavatest.model.Movie;
 
 public class RealmMovieMapper extends Mapper<RealmMovie, Movie> {
 
+    public RealmMovieMapper() {
+    }
+
     @Override
     public RealmMovie map(Movie m) {
         RealmMovie realmMovie = new RealmMovie();

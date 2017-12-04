@@ -6,9 +6,12 @@ import android.support.annotation.IntDef;
 import android.support.annotation.StringDef;
 
 import com.example.milosevi.rxjavatest.database.model.RealmMovie;
+import com.example.milosevi.rxjavatest.details.model.Review;
+import com.example.milosevi.rxjavatest.details.model.Trailer;
 import com.google.gson.annotations.SerializedName;
 
 import java.lang.annotation.Retention;
+import java.util.List;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
@@ -46,6 +49,10 @@ public class Movie implements Parcelable {
     private String mPopularity ;//popularity in the api)
     @SerializedName("release_date")
     private String mReleaseDate;//release_date
+
+    private List<Review> mReviews;
+
+    private List<Trailer> mTrailers;
 
     public Movie(){};
 
@@ -113,6 +120,22 @@ public class Movie implements Parcelable {
         this.mPopularity = mPopularity;
     }
 
+    public List<Review> getReviews() {
+        return mReviews;
+    }
+
+    public void setReviews(List<Review> mReviews) {
+        this.mReviews = mReviews;
+    }
+
+    public List<Trailer> getTrailers() {
+        return mTrailers;
+    }
+
+    public void setTrailers(List<Trailer> mTrailers) {
+        this.mTrailers = mTrailers;
+    }
+
 
     public Movie(Integer id, String mTitle, String mImageUrl, String mDescription, Double mUserRating,
                  Integer mVoteCount,String mPopularity, String mReleaseDate) {
@@ -135,7 +158,10 @@ public class Movie implements Parcelable {
         this.mPopularity = m.mPopularity;
         this.mVoteCount = m.mVoteCount;
         this.mReleaseDate = m.mReleaseDate;
+        this.mReviews = m.mReviews;
+        this.mTrailers = m.mTrailers;
     }
+
 
     @Override
     public String toString() {
@@ -144,13 +170,14 @@ public class Movie implements Parcelable {
                 ", mTitle='" + mTitle + '\'' +
                 ", mImageUrl='" + mImageUrl + '\'' +
                 ", mDescription='" + mDescription + '\'' +
-                ", mUserRating='" + mUserRating + '\'' +
-                ", mVoteCount='" + mVoteCount + '\'' +
+                ", mUserRating=" + mUserRating +
+                ", mVoteCount=" + mVoteCount +
                 ", mPopularity='" + mPopularity + '\'' +
                 ", mReleaseDate='" + mReleaseDate + '\'' +
+                ", mReviews=" + mReviews +
+                ", mTrailers=" + mTrailers +
                 '}';
     }
-
 
     @Override
     public int describeContents() {

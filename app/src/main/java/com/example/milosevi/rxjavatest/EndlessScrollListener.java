@@ -12,19 +12,15 @@ import android.util.Log;
 
 public abstract class EndlessScrollListener extends RecyclerView.OnScrollListener {
 
+
+    private static final int START_PAGE =1;
     // The minimum amount of items to have below your current scroll position
     // before loading more.
     private int mVisibleThreshold = 5;
     // The current offset index of data you have loaded
-    private int currentPage = 0;
-    // The total number of items in the dataset after the last load
-    private int previousTotalItemCount = 0;
-    // True if we are still waiting for the last set of data to load.
-    private boolean loading = true;
-    // Sets the starting page index
-    private int startingPageIndex = 0;
+    private int mCurrentPage = START_PAGE;
 
-    RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.LayoutManager mLayoutManager;
 
 
     public EndlessScrollListener(RecyclerView.LayoutManager layoutManager) {
@@ -50,26 +46,21 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
             int totalItemCount = mLayoutManager.getItemCount();
             int firstVisibleItemPosition = 0;
             if (mLayoutManager instanceof StaggeredGridLayoutManager) {
-                int[] lastVisibleItemPositions = ((StaggeredGridLayoutManager) mLayoutManager).findFirstVisibleItemPositions(null);
+                int[] firstVisibleItemPositions = ((StaggeredGridLayoutManager) mLayoutManager).findFirstVisibleItemPositions(null);
                 // get maximum element within the list
-                firstVisibleItemPosition = getFirstVisiblePosition(lastVisibleItemPositions);
+                firstVisibleItemPosition = getFirstVisiblePosition(firstVisibleItemPositions);
             } else if (mLayoutManager instanceof GridLayoutManager) {
                 firstVisibleItemPosition = ((GridLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
             } else if (mLayoutManager instanceof LinearLayoutManager) {
                 firstVisibleItemPosition = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
             }
-            if (loading) {
-                if (totalItemCount > previousTotalItemCount) {
-                    loading = false;
-                    previousTotalItemCount = totalItemCount;
-                }
-            }
-            if (!loading && (totalItemCount - visibleItemCount)
+
+            if (!isLoading() && (totalItemCount - visibleItemCount)
                     <= (firstVisibleItemPosition + mVisibleThreshold)) {
                 // End has been reached
-                currentPage++;
-                loading = onLoadMore(currentPage, totalItemCount, recyclerView);
-                Log.i("Miki", "end called" + currentPage);
+                mCurrentPage++;
+                onLoadMore(mCurrentPage, totalItemCount, recyclerView);
+                Log.i("Miki", "end called " + mCurrentPage);
             }
         }
     }
@@ -81,11 +72,13 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
 
     // Call this method whenever performing new searches
     public void resetState() {
-        currentPage = 0;
-        previousTotalItemCount = 0;
-        loading = true;
+        mCurrentPage = START_PAGE;
     }
 
     // Defines the process for actually loading more data based on page
-    public abstract boolean onLoadMore(int page, int totalItemsCount, RecyclerView view);
+    public abstract void onLoadMore(int page, int totalItemsCount, RecyclerView view);
+
+    public abstract boolean isLoading();//this might be calculated here inside, see whats better
+
+    public abstract boolean isEndOfTheList();//TO DO handle this as well, probobly WebApi has indication!
 }

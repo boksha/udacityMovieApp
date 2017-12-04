@@ -35,13 +35,13 @@ public class GridContract {
 
         void onMenuItemClicked(@ListMode int listMode);
         void onLoadMovieList();
-        boolean onLoadMovieListByPage(int page);
+        void onLoadMovieListByPage(int page);
         void onMovieClicked(Movie movie);
         void onSearch(String searchWord);
         void onViewAttached(View view);
         void onViewDetached(View view);
         void onActivityDestroyed();
-
+        boolean isLoading();
     }
 
     public interface Repository{

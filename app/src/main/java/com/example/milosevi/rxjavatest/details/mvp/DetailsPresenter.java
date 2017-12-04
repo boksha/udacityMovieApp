@@ -20,6 +20,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class DetailsPresenter implements DetailsContract.Presenter {
+
     private static final String TAG = "Miki";
     private CompositeDisposable disposableList = new CompositeDisposable();
     private DetailsContract.View mView;
@@ -30,24 +31,14 @@ public class DetailsPresenter implements DetailsContract.Presenter {
     }
 
     @Override
-    public void onLoadTrailerList(Integer id) {
-        fetchTrailers(id);
-    }
-
-    @Override
-    public void onLoadReviewList(Integer id) {
-        fetchReviews(id);
-    }
-
-    @Override
     public void onLoadMovie(Integer id) {
+        getMovie(id);
         mView.updateMarkButton(mRepository.isMovieMarked(id));
     }
 
     @Override
     public void onMovieMarked(Movie movie) {
         boolean mark = ! mRepository.isMovieMarked(movie.getId());
-//        movie.setMarked(!movie.isMarked());
         if (mark) {
             mRepository.markMovie(movie);
         } else {
@@ -80,50 +71,25 @@ public class DetailsPresenter implements DetailsContract.Presenter {
         mView.navigateToTrailer(key);
     }
 
-    private void fetchTrailers(Integer id) {
-        disposableList.add(mRepository.getTrailers(id).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Trailer>>() {
+    private void getMovie(Integer id) {
+        disposableList.add(mRepository.getMovieById(id).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<Movie>() {
 
                     @Override
-                    public void onNext(List<Trailer> trailers) {
-                        Log.i(TAG, "onNext: " + trailers);
-//                        watchYoutubeVideo(getApplicationContext(),trailers.getTrailers().get(0).getKey());
-                        mView.showTrailerList(trailers);
+                    public void onNext(Movie movie) {
+                        Log.i(TAG, "getMovie onNext: " + movie);
+                        mView.showMovie(movie);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
+                        Log.i(TAG, "getMovie onError: " + e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
+                        Log.i(TAG, "getMovie onComplete: ");
                     }
                 }));
-
-    }
-
-    private void fetchReviews(Integer id) {
-        disposableList.add(mRepository.getReviews(id).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Review>>() {
-
-                    @Override
-                    public void onNext(List<Review> reviews) {
-                        Log.i(TAG, "onNext: " + reviews);
-                        mView.showReviewList(reviews);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError: " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG, "onComplete: ");
-                    }
-                }));
-
     }
 }

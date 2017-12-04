@@ -21,6 +21,7 @@ import io.reactivex.Observable;
 public class GridRepository implements GridContract.Repository {
 
     private static final String TAG = "Miki";
+    private static final int START_PAGE = 1;
     private NetworkDataSource mWebApiSource;
     private DbDataSource mDatabaseSource;
 
@@ -35,20 +36,23 @@ public class GridRepository implements GridContract.Repository {
                 .filter(movies -> movies.size() > 0);
         Observable<List<Movie>> movieListCloud = mWebApiSource.getMovies(Movie.MOST_POPULAR, page)
                 .retryWhen(errors ->
-                        errors.zipWith(Observable.range(1, 3), (n, i) -> i)
-                                .flatMap(retryCount -> {
-                                    Log.i(TAG, "getMostPopular: retry" + retryCount);
-                                    return Observable.timer((long) Math.pow(5, retryCount), TimeUnit.SECONDS);
-                                })
+                                errors.zipWith(Observable.range(1, 3), (n, i) -> i)
+                                        .flatMap(retryCount -> {
+                                            Log.i(TAG, "getMostPopular: retry" + retryCount);
+                                            return Observable.timer((long) Math.pow(5, retryCount), TimeUnit.SECONDS);
+                                        })
 //  for onError after retry?.flatMap(it -> it < count ? Observable.timer(it, TimeUnit.SECONDS) : t.flatMap(Observable::error));
                 )
                 .doOnNext((movies) -> {
-                    mDatabaseSource.deleteAllMovies(Movie.MOST_POPULAR);
+                    if (page == START_PAGE) {
+                        //delet only first time, otherwise add to cash
+                        mDatabaseSource.deleteAllMovies(Movie.MOST_POPULAR);
+                    }
                     mDatabaseSource.addMovieList(movies, Movie.MOST_POPULAR);
                     Log.i(TAG, "getMostPopular: save finished " + movies);
 
                 });
-        if (page > 0) return movieListCloud;
+        if (page > START_PAGE) return movieListCloud;
         return Observable.concat(movieListDB, movieListCloud);
     }
 
@@ -71,11 +75,14 @@ public class GridRepository implements GridContract.Repository {
                                 })
                 )
                 .doOnNext((movies) -> {
-                    mDatabaseSource.deleteAllMovies(Movie.TOP_RATED);
+                    if (page == START_PAGE) {
+                        //delet only first time, otherwise add to cash
+                        mDatabaseSource.deleteAllMovies(Movie.TOP_RATED);
+                    }
                     mDatabaseSource.addMovieList(movies, Movie.TOP_RATED);
                     Log.i(TAG, "getTopRated: save finished " + movies);
                 });
-        if (page > 0) return movieListCloud;
+        if (page > START_PAGE) return movieListCloud;
         return Observable.concat(movieListDB, movieListCloud);
     }
 

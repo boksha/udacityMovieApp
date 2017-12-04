@@ -72,7 +72,9 @@ public class TrailerAdapter  extends
 
         public void setTrailers(List<Trailer> trailers){
             items.clear();
-            items.addAll(trailers);
+            if (trailers != null) {
+                items.addAll(trailers);
+            }
             notifyDataSetChanged();
         }
 

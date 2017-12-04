@@ -18,21 +18,25 @@ import io.reactivex.schedulers.Schedulers;
 public class GridPresenter implements GridContract.Presenter {
 
     private static final String TAG = "Miki";
-    private static final int STARTING_PAGE = 0;
+    private static final int STARTING_PAGE = 1;
     private CompositeDisposable disposableList = new CompositeDisposable();
     private GridContract.Repository mRepository;
     private GridContract.View mView;
+    private boolean mIsLoading = false;
 
     @ListMode
     private int mCurrentListMode = LIST_MOST_POPULAR;
 
 
-    public GridPresenter(GridContract.Repository repository) {
+    public GridPresenter(GridContract.View view, GridContract.Repository repository) {
         mRepository = repository;
+        mView = view;
     }
 
     @Override
     public void onMovieClicked(Movie movie) {
+        disposableList.clear();
+        mIsLoading = false;
         mView.navigateToMovie(movie);
     }
 
@@ -41,15 +45,19 @@ public class GridPresenter implements GridContract.Presenter {
         if (disposableList != null) {
             Log.i(TAG, "onDestroy: dispose");
             disposableList.clear();
+            mIsLoading = false;
         }
+    }
+
+    @Override
+    public boolean isLoading() {
+        return mIsLoading;
     }
 
     @Override
     public void onMenuItemClicked(@ListMode int listMode) {
         if (listMode != mCurrentListMode) {
-//            mCurrentPage = 1;
-//            previousTotal = 0;
-//            loading = true;
+            mIsLoading = false;
             mView.clearMovieList();
             mView.resetScrollPosition();
             mCurrentListMode = listMode;
@@ -63,9 +71,8 @@ public class GridPresenter implements GridContract.Presenter {
     }
 
     @Override
-    public boolean onLoadMovieListByPage(int page) {
+    public void onLoadMovieListByPage(int page) {
         loadPage(page);
-        return true;
     }
 
 
@@ -76,16 +83,17 @@ public class GridPresenter implements GridContract.Presenter {
 
     @Override
     public void onViewAttached(GridContract.View view) {
-        mView = view;
+//        mView = view;
     }
 
     @Override
     public void onViewDetached(GridContract.View view) {
-        mView = null;
+//        mView = null;
     }
 
     private void getMostPopularMovies(int page) {
         disposableList.clear();
+        mIsLoading = true;
         disposableList.add(mRepository.getMostPopular(page).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
@@ -102,17 +110,20 @@ public class GridPresenter implements GridContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         Log.i(TAG, "getMostPopularMovies onError: " + e.getMessage());
+                       mIsLoading = false;
                     }
 
                     @Override
                     public void onComplete() {
                         Log.i(TAG, "getMostPopularMovies onComplete: ");
+                        mIsLoading = false;
                     }
                 }));
     }
 
     private void getFavourites() {
         disposableList.clear();
+        mIsLoading = false;
         disposableList.add(mRepository.getFavourites().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
@@ -136,6 +147,7 @@ public class GridPresenter implements GridContract.Presenter {
 
     private void getTopRated(int page) {
         disposableList.clear();
+        mIsLoading = true;
         disposableList.add(mRepository.getTopRated(page).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableObserver<List<Movie>>() {
 
@@ -152,11 +164,13 @@ public class GridPresenter implements GridContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         Log.i(TAG, "getTopRated onError: " + e.getMessage());
+                        mIsLoading = false;
                     }
 
                     @Override
                     public void onComplete() {
                         Log.i(TAG, "getTopRated onComplete: ");
+                        mIsLoading = false;
                     }
                 }));
     }
